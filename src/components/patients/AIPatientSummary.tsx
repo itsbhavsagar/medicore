@@ -89,9 +89,9 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
   };
 
   return (
-    <Card className="border-primary/20 bg-surface p-5">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
+    <Card className="border-primary/20 bg-surface p-4 sm:p-5">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             <Bot className="h-5 w-5 text-primary" />
             <p className="text-sm font-medium text-foreground">
@@ -106,20 +106,24 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
           ) : null}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-wrap items-center gap-3 xl:w-auto xl:justify-end">
           {isStreaming ? <Badge tone="info">Streaming</Badge> : null}
           <Button
             loading={isStreaming}
             onClick={handleGenerate}
             variant="primary"
-            className="cursor-pointer"
+            className="min-w-0 flex-1 cursor-pointer px-4 sm:flex-none"
             disabled={generatedOnce}
           >
             <Sparkles className="h-4 w-4 inline-flex! mr-2" />
             {generatedOnce ? "Already Generated" : "Generate AI Summary"}
           </Button>
           {isStreaming ? (
-            <Button onClick={handleStop} variant="danger">
+            <Button
+              className="flex-1 px-4 sm:flex-none"
+              onClick={handleStop}
+              variant="danger"
+            >
               <Square className="h-4 w-4 inline-flex! mr-2" />
               Stop
             </Button>
@@ -127,7 +131,7 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
         </div>
       </div>
 
-      <div className="mt-5 rounded-xl border border-border bg-surface-elevated p-5">
+      <div className="mt-5 max-w-full overflow-hidden rounded-xl border border-border bg-surface-elevated p-4 sm:p-5">
         {summary ? (
           <div className="space-y-2">
             {formatSummaryText(summary).map((line, index) =>

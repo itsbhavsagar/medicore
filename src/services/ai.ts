@@ -54,6 +54,12 @@ export async function streamAiPatientSummary({
     return summary
   }
 
+  if (contentType.includes('text/html')) {
+    throw new Error(
+      'AI summary endpoint returned HTML instead of data. Check the deployed API route configuration.',
+    )
+  }
+
   if (!response.body) {
     throw new Error('Streaming is not available for this response.')
   }
