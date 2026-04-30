@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { PatientCard } from '../components/patients/PatientCard'
 import { PatientRow } from '../components/patients/PatientRow'
+import { PatientSidePanel } from '../components/patients/PatientSidePanel'
 import { ViewToggle } from '../components/patients/ViewToggle'
 import { Badge } from '../components/ui/Badge'
 import { Card } from '../components/ui/Card'
@@ -13,6 +14,7 @@ const SEARCH_DEBOUNCE_MS = 250
 export function PatientDetails() {
   const {
     filteredPatients,
+    selectedPatient,
     searchQuery,
     selectPatient,
     setSearch,
@@ -104,6 +106,11 @@ export function PatientDetails() {
           </motion.section>
         )}
       </AnimatePresence>
+
+      <PatientSidePanel
+        onClose={() => selectPatient(null)}
+        patient={selectedPatient}
+      />
     </div>
   )
 }
