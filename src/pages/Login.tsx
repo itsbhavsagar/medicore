@@ -66,14 +66,8 @@ function EKGLine() {
 }
 
 export function Login() {
-  const {
-    clearError,
-    isInitialized,
-    isLoading,
-    login,
-    loginWithGoogle,
-    user,
-  } = useAuth();
+  const { clearError, isInitialized, isLoading, login, loginWithGoogle, user } =
+    useAuth();
   const { show } = useToasts();
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [fieldErrors, setFieldErrors] = useState<Partial<FormState>>({});
