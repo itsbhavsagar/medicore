@@ -134,7 +134,7 @@ export function Dashboard() {
 
   const quickActions = useMemo(
     () => [
-      { label: 'Add Patient', icon: Plus, to: '/patients' },
+      { label: 'Add Patient', icon: Plus, to: '/patients?new=1' },
       { label: 'View Analytics', icon: HeartPulse, to: '/analytics' },
       { label: 'Schedule', icon: CalendarCheck2, to: '/patients' },
     ],
@@ -172,8 +172,8 @@ export function Dashboard() {
               <Link
                 className={cn(
                   label === 'Add Patient'
-                    ? 'inline-flex min-w-36 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition duration-200'
-                    : 'inline-flex min-w-36 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition duration-200 hover:bg-surface-elevated',
+                    ? 'inline-flex min-w-36 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition duration-200'
+                    : 'inline-flex min-w-36 cursor-pointer items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition duration-200 hover:bg-surface-elevated',
                 )}
                 key={label}
                 to={to}

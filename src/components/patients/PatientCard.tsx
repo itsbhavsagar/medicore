@@ -11,7 +11,11 @@ interface PatientCardProps {
 
 export function PatientCard({ onSelect, patient }: PatientCardProps) {
   return (
-    <button className="text-left" onClick={() => onSelect(patient)} type="button">
+    <button
+      className="cursor-pointer text-left"
+      onClick={() => onSelect(patient)}
+      type="button"
+    >
       <Card className="h-full p-4" interactive>
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-center gap-4">

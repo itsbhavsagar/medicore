@@ -12,7 +12,7 @@ export function PatientRow({ onSelect, patient }: PatientRowProps) {
   return (
     <button
       className={cn(
-        'grid w-full grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4 text-left transition duration-200 hover:border-primary/20 hover:bg-surface-elevated',
+        'grid w-full cursor-pointer grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] items-center gap-4 rounded-xl border border-border bg-surface px-5 py-4 text-left transition duration-200 hover:border-primary/20 hover:bg-surface-elevated',
       )}
       onClick={() => onSelect(patient)}
       type="button"

@@ -1,4 +1,5 @@
-import { Bell, Menu } from 'lucide-react'
+import { Bell, Menu, X } from 'lucide-react'
+import { useState } from 'react'
 import { useNotifications } from '../../hooks/useNotifications'
 import { useThemeStore } from '../../store/themeStore'
 import { Avatar } from '../ui/Avatar'
@@ -12,9 +13,11 @@ interface HeaderProps {
 }
 
 export function Header({ subtitle, title, userName }: HeaderProps) {
-  const notifications = useNotifications().notifications
+  const [isAlertOpen, setIsAlertOpen] = useState(false)
+  const { dismiss, markAllRead, notifications } = useNotifications()
   const theme = useThemeStore((state) => state.theme)
   const toggleTheme = useThemeStore((state) => state.toggle)
+  const unreadCount = notifications.filter((notification) => !notification.read).length
 
   return (
     <header className="flex flex-col gap-5 border-b border-border px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
@@ -34,16 +37,69 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="relative flex flex-wrap items-center gap-3">
         <Toggle
           aria-label="Toggle theme"
           checked={theme === 'dark'}
           onClick={toggleTheme}
         />
-        <Button size="sm" variant="secondary">
+        <Button
+          className="cursor-pointer"
+          onClick={() => {
+            setIsAlertOpen((current) => !current)
+            if (!isAlertOpen) {
+              markAllRead()
+            }
+          }}
+          size="sm"
+          variant="secondary"
+        >
           <Bell className="h-4 w-4" />
-          Alerts {notifications.length > 0 ? `(${notifications.length})` : ''}
+          Alerts {notifications.length > 0 ? `(${unreadCount || notifications.length})` : ''}
         </Button>
+        {isAlertOpen ? (
+          <div className="absolute right-0 top-14 z-30 w-[340px] rounded-xl border border-border bg-surface p-4 shadow-[var(--app-shadow)]">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-foreground">Notifications</p>
+              <Button
+                className="cursor-pointer"
+                onClick={() => setIsAlertOpen(false)}
+                size="sm"
+                variant="ghost"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            <div className="mt-3 space-y-3">
+              {notifications.length > 0 ? (
+                notifications.map((notification) => (
+                  <div
+                    className="flex items-start justify-between gap-3 rounded-xl border border-border bg-surface-elevated p-3"
+                    key={notification.id}
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-foreground">
+                        {notification.title}
+                      </p>
+                      <p className="mt-1 text-sm text-muted">
+                        {notification.message}
+                      </p>
+                    </div>
+                    <button
+                      className="cursor-pointer text-xs font-medium text-subtle"
+                      onClick={() => dismiss(notification.id)}
+                      type="button"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted">No alerts right now.</p>
+              )}
+            </div>
+          </div>
+        ) : null}
         <div className="flex items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
           <Avatar className="h-10 w-10 text-xs" name={userName} />
           <div>

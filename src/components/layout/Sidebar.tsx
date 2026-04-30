@@ -53,7 +53,7 @@ export function Sidebar({ onLogout }: SidebarProps) {
           3 critical patients need review this morning.
         </p>
         <Button
-          className="w-full justify-center"
+          className="w-full cursor-pointer justify-center rounded-xl"
           onClick={onLogout}
           size="sm"
           variant="secondary"

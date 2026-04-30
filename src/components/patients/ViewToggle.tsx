@@ -21,7 +21,7 @@ export function ViewToggle({ onChange, value }: ViewToggleProps) {
         return (
           <button
             className={cn(
-              'inline-flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-medium transition duration-200',
+              'inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl px-4 text-sm font-medium transition duration-200',
               active
                 ? 'bg-primary text-white'
                 : 'text-muted hover:text-foreground',
