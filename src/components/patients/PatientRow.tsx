@@ -20,7 +20,7 @@ export function PatientRow({ onSelect, patient }: PatientRowProps) {
       <div className="flex flex-col sm:grid sm:grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] sm:items-center sm:gap-4 gap-3">
         <div className="flex items-center gap-3">
           <Avatar
-            className="h-8 sm:h-10 w-8 sm:w-10 text-xs flex-shrink-0"
+            className="h-8 sm:h-10 w-8 sm:w-10 text-xs shrink-0"
             name={patient.name}
             status={patient.status}
           />
