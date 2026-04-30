@@ -3,12 +3,12 @@ import {
   Activity,
   Phone,
   Pill,
-  ShieldAlert,
   Stethoscope,
   UserRoundX,
   X,
 } from 'lucide-react'
 import type { Patient } from '../../types'
+import { AIPatientSummary } from './AIPatientSummary'
 import { Avatar } from '../ui/Avatar'
 import { Badge } from '../ui/Badge'
 import { Button } from '../ui/Button'
@@ -157,20 +157,7 @@ export function PatientSidePanel({
                   </div>
                 </Card>
 
-                <Card className="rounded-[24px] border-primary/20 bg-[linear-gradient(145deg,var(--app-primary-soft),transparent_55%),var(--app-surface)] p-5">
-                  <div className="flex items-center gap-3">
-                    <ShieldAlert className="h-5 w-5 text-primary" />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        AI summary workspace
-                      </p>
-                      <p className="mt-1 text-sm text-muted">
-                        Streaming patient assessment will appear here in the next
-                        feature slice.
-                      </p>
-                    </div>
-                  </div>
-                </Card>
+                <AIPatientSummary patient={patient} />
               </div>
             </Card>
           </motion.aside>
