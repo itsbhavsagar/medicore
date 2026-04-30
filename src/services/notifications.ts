@@ -5,9 +5,7 @@ export async function registerAppServiceWorker() {
     return null
   }
 
-  return navigator.serviceWorker.register(new URL('../sw.js', import.meta.url), {
-    type: 'module',
-  })
+  return navigator.serviceWorker.register('/sw.js')
 }
 
 export async function showAppNotification(title: string, body: string) {

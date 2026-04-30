@@ -9,6 +9,7 @@ export const usePatients = () => {
   const setView = usePatientStore((state) => state.setView)
   const selectPatient = usePatientStore((state) => state.selectPatient)
   const setSearch = usePatientStore((state) => state.setSearch)
+  const addPatient = usePatientStore((state) => state.addPatient)
   const deferredSearch = useDeferredValue(searchQuery)
 
   const filteredPatients = useMemo(() => {
@@ -38,5 +39,6 @@ export const usePatients = () => {
     setView,
     selectPatient,
     setSearch,
+    addPatient,
   }
 }

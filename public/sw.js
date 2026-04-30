@@ -7,17 +7,20 @@ self.addEventListener('activate', (event) => {
 })
 
 self.addEventListener('notificationclick', (event) => {
-  event.notification.close()
+  const targetUrl = event.notification.data?.url ?? '/'
 
+  event.notification.close()
   event.waitUntil(
     self.clients.matchAll({ includeUncontrolled: true, type: 'window' }).then((clients) => {
-      const activeClient = clients[0]
+      for (const client of clients) {
+        if ('focus' in client) {
+          client.navigate(targetUrl)
 
-      if (activeClient) {
-        return activeClient.focus()
+          return client.focus()
+        }
       }
 
-      return self.clients.openWindow('/')
+      return self.clients.openWindow(targetUrl)
     }),
   )
 })

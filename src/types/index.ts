@@ -96,3 +96,19 @@ export interface NotificationItem {
 export interface AiSummaryPayload {
   patient: Patient
 }
+
+export interface NewPatientInput {
+  name: string
+  age: number
+  gender: Gender
+  bloodType: BloodType
+  diagnosis: string
+  status: PatientStatus
+  roomNumber: string
+  doctor: string
+  department: Department
+  medications: string[]
+  emergencyContactName: string
+  emergencyContactRelationship: string
+  emergencyContactPhone: string
+}
