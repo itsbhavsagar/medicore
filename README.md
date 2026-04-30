@@ -2,7 +2,7 @@
 
 MediCore is a production-style B2B healthcare SaaS dashboard built for a frontend engineering assignment. The app focuses on operational visibility for care teams: secure Firebase sign-in, a themed analytics workspace, searchable patient records, and a Groq-powered streaming AI summary inside the patient details panel.
 
-Live demo link: [http://localhost:5173](http://localhost:5173)
+Live demo link: https://medicore-bice.vercel.app/login
 
 ## Project overview
 
