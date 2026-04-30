@@ -56,8 +56,9 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
           onClick={toggleTheme}
           className="cursor-pointer shrink-0"
         />
+
         <Button
-          className="cursor-pointer gap-1 sm:gap-2.5 text-xs sm:text-sm min-h-9 sm:min-h-10 px-2 sm:px-3"
+          className="cursor-pointer relative min-h-9 sm:min-h-10 px-2.5 sm:px-3"
           onClick={() => {
             setIsAlertOpen((current) => !current);
             if (!isAlertOpen) {
@@ -67,14 +68,16 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
           size="sm"
           variant="secondary"
         >
-          <span className="inline-flex! h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full bg-primary-soft text-primary shrink-0">
-            <Bell className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+          <span className="relative inline-flex items-center justify-center">
+            <Bell className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-2 -right-2.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-white leading-none">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
           </span>
-
-          {notifications.length > 0
-            ? ` (${unreadCount || notifications.length})`
-            : ""}
         </Button>
+
         {isAlertOpen ? (
           <div className="absolute right-0 top-12 sm:top-14 z-30 w-72 sm:w-85 rounded-xl border border-border bg-surface p-3 sm:p-4 shadow-(--app-shadow)">
             <div className="flex items-center justify-between">
@@ -120,6 +123,7 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
             </div>
           </div>
         ) : null}
+
         <div className="flex items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
           <Avatar className="h-10 w-10 text-xs" name={userName} />
           <div>
