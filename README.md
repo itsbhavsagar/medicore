@@ -6,9 +6,10 @@ Live demo: https://medicore-bice.vercel.app/login
 
 You can log in using test credentials or Google sign-in.
 
-Test Creds:-
-Email - test@medicore.com
-Passowrd - Test@1234
+Test credentials:
+
+- Email: test@medicore.com
+- Password: Test@1234
 
 ---
 
@@ -22,7 +23,7 @@ The app simulates a care team dashboard where users can:
 - switch between dense and readable views
 - generate AI-assisted summaries from patient context
 
-The focus was to keep it frontend-heavy, but structured in a way that it could evolve into a production system without major rewrites.
+The focus was to keep it frontend-heavy while structuring it in a way that could scale into a production system without major rewrites.
 
 ---
 
@@ -31,7 +32,7 @@ The focus was to keep it frontend-heavy, but structured in a way that it could e
 ### Authentication
 
 - Firebase Authentication (email/password + Google)
-- Google sign-in handles both login and first-time user registration automatically
+- Google sign-in supports both returning and first-time users through Firebase Authentication
 - Clean handling of loading and error states
 - No raw Firebase errors exposed to the UI
 
@@ -82,7 +83,12 @@ The focus was to keep it frontend-heavy, but structured in a way that it could e
 
 - Toast notifications for user actions (success / error / cancellation)
 - In-app notification store
-- Service worker for browser-level notifications (e.g. AI summary completion)
+- Service worker for browser-level notifications
+
+Notification use cases include:
+
+- welcome-back notification after login
+- AI summary completion alerts
 
 ---
 
@@ -98,12 +104,14 @@ This keeps components closer to real-world structure and makes loading, caching,
 
 ### Lightweight caching & request deduplication
 
-The data layer includes:
+The simulated data layer includes:
 
 - in-memory caching
 - shared pending request handling
 
-This avoids redundant calls and mimics behavior of tools like React Query, without adding extra dependencies.
+This is applied across dashboard, analytics, and patient data to avoid redundant calls and keep navigation responsive.
+
+The goal was to mimic real-world data fetching behavior without introducing heavier libraries like React Query.
 
 ---
 
@@ -133,18 +141,18 @@ No layers were added unless they solved a real problem.
 
 ---
 
-## AI summary: streaming implementation
+### AI summary: streaming implementation
 
-The AI summary flow is implemented with streaming rather than a simple request/response.
+The AI summary flow is implemented with streaming support during local development, with a serverless fallback in production.
 
 1. The client sends patient data to `/api/ai-summary`
-2. In development, requests are proxied to a local Express server
-3. In production, the same endpoint is handled via a Vercel serverless function
-4. The Groq API returns a streamed response
-5. The frontend reads the stream using `ReadableStream` and appends tokens progressively
-6. `AbortController` is used to allow users to stop generation mid-way
+2. In development, requests are proxied to a local Express server which streams responses from Groq
+3. In production (Vercel), the same endpoint is handled via a serverless function returning a JSON response
+4. The frontend supports both modes:
+   - progressive rendering when streaming is available
+   - standard response handling as a fallback
 
-This makes the interaction feel closer to a real product rather than a static response.
+AbortController is used to allow users to stop generation mid-way.
 
 ---
 
@@ -175,7 +183,7 @@ A few additions go beyond the base requirements:
 - prevention of repeated AI generation
 - formatting AI output for readability
 - toast + service worker notification integration
-- lightweight caching layer for dashboard data
+- lightweight caching layer for dashboard, analytics, and patient data
 - improved UX around edge states and errors
 
 ---
@@ -227,6 +235,8 @@ If this were extended beyond assignment scope, the next step wouldn’t be addin
 - backend persistence and audit tracking
 
 For this assignment, the focus was to keep it frontend-first, realistic, and maintainable without overengineering beyond what the scope actually required.
+
+The goal was to keep the system simple, but structured so it could evolve into a production setup without needing major refactors.
 
 ---
 
