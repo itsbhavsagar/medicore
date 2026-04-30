@@ -7,6 +7,7 @@ import {
   UserRoundX,
   X,
 } from "lucide-react";
+import { useEffect } from "react";
 import type { Patient } from "../../types";
 import { AIPatientSummary } from "./AIPatientSummary";
 import { Avatar } from "../ui/Avatar";
@@ -20,6 +21,19 @@ interface PatientSidePanelProps {
 }
 
 export function PatientSidePanel({ onClose, patient }: PatientSidePanelProps) {
+  useEffect(() => {
+    if (!patient) {
+      return undefined;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [patient]);
+
   return (
     <AnimatePresence>
       {patient ? (
