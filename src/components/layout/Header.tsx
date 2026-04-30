@@ -23,10 +23,11 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
           <Menu className="h-4 w-4" />
         </Button>
         <div>
-          <p className="text-sm font-medium uppercase tracking-[0.24em] text-accent">
-            Operations
+          <p className="flex items-center gap-2 text-sm font-medium text-muted">
+            <span className="h-2 w-2 rounded-full bg-accent" />
+            operations
           </p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-[-0.04em] text-foreground">
+          <h1 className="mt-2 text-[28px] font-medium tracking-[-0.03em] text-foreground">
             {title}
           </h1>
           <p className="mt-2 text-sm text-muted">{subtitle}</p>
@@ -43,10 +44,10 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
           <Bell className="h-4 w-4" />
           Alerts {notifications.length > 0 ? `(${notifications.length})` : ''}
         </Button>
-        <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-2">
-          <Avatar className="h-10 w-10 rounded-xl text-xs" name={userName} />
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-surface px-3 py-2">
+          <Avatar className="h-10 w-10 text-xs" name={userName} />
           <div>
-            <p className="text-sm font-semibold text-foreground">{userName}</p>
+            <p className="text-sm font-medium text-foreground">{userName}</p>
             <p className="text-xs text-subtle">Care coordinator</p>
           </div>
         </div>

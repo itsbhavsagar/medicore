@@ -16,8 +16,6 @@ import {
   YAxis,
 } from 'recharts'
 import { admissionTrend, departmentMetrics } from '../data/mockPatients'
-import { Badge } from '../components/ui/Badge'
-import { Button } from '../components/ui/Button'
 import { Card } from '../components/ui/Card'
 
 const CHART_HEIGHT = 320
@@ -47,39 +45,38 @@ export function Analytics() {
   }, [dateRange])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
         initial={{ opacity: 0, y: 12 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="overflow-hidden bg-[linear-gradient(145deg,var(--app-accent-soft),transparent_42%),var(--app-surface)]">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <Badge tone="info">Analytics center</Badge>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-foreground">
-              Admissions, department load, and recovery performance
+            <h2 className="text-[28px] font-medium tracking-[-0.03em] text-foreground">
+              Analytics
             </h2>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-muted">
-              Compare operational throughput across time windows and spot areas
-              that need staffing or care-plan attention.
+            <p className="mt-1 text-sm text-muted">
+              Admissions, department load, and recovery performance.
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="inline-flex rounded-full border border-border bg-surface p-1">
             {dateRangeOptions.map((option) => (
-              <Button
-                className="min-w-28"
+              <button
+                className={
+                  dateRange === option.value
+                    ? 'rounded-full bg-primary-soft px-4 py-2 text-sm font-medium text-foreground'
+                    : 'rounded-full px-4 py-2 text-sm font-medium text-muted'
+                }
                 key={option.value}
                 onClick={() => setDateRange(option.value)}
-                variant={dateRange === option.value ? 'primary' : 'secondary'}
+                type="button"
               >
                 {option.label}
-              </Button>
+              </button>
             ))}
           </div>
-        </div>
-        </Card>
       </motion.div>
 
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
@@ -89,12 +86,9 @@ export function Analytics() {
           transition={{ delay: 0.08, duration: 0.28 }}
         >
           <Card>
-          <div className="mb-6">
-            <p className="text-lg font-semibold text-foreground">
+          <div className="mb-4">
+            <p className="text-sm font-medium text-foreground">
               Patient admission trends
-            </p>
-            <p className="mt-1 text-sm text-muted">
-              Admissions and discharges over the selected date range.
             </p>
           </div>
 
@@ -107,7 +101,7 @@ export function Analytics() {
                 contentStyle={{
                   background: 'var(--app-surface-elevated)',
                   border: '1px solid var(--app-border)',
-                  borderRadius: '18px',
+                  borderRadius: '12px',
                   color: 'var(--app-text)',
                 }}
               />
@@ -139,12 +133,9 @@ export function Analytics() {
           transition={{ delay: 0.14, duration: 0.28 }}
         >
           <Card>
-          <div className="mb-6">
-            <p className="text-lg font-semibold text-foreground">
+          <div className="mb-4">
+            <p className="text-sm font-medium text-foreground">
               Department distribution
-            </p>
-            <p className="mt-1 text-sm text-muted">
-              Current patient census across active departments.
             </p>
           </div>
 
@@ -168,7 +159,7 @@ export function Analytics() {
                 contentStyle={{
                   background: 'var(--app-surface-elevated)',
                   border: '1px solid var(--app-border)',
-                  borderRadius: '18px',
+                  borderRadius: '12px',
                   color: 'var(--app-text)',
                 }}
               />
@@ -186,12 +177,9 @@ export function Analytics() {
           transition={{ delay: 0.2, duration: 0.28 }}
         >
           <Card>
-          <div className="mb-6">
-            <p className="text-lg font-semibold text-foreground">
+          <div className="mb-4">
+            <p className="text-sm font-medium text-foreground">
               Recovery rate by department
-            </p>
-            <p className="mt-1 text-sm text-muted">
-              Higher recovery completion highlights smoother discharge planning.
             </p>
           </div>
 
@@ -210,15 +198,15 @@ export function Analytics() {
                 contentStyle={{
                   background: 'var(--app-surface-elevated)',
                   border: '1px solid var(--app-border)',
-                  borderRadius: '18px',
+                  borderRadius: '12px',
                   color: 'var(--app-text)',
                 }}
               />
               <Bar
                 dataKey="recoveryRate"
                 fill="var(--app-primary)"
-                radius={[0, 14, 14, 0]}
-              />
+              radius={[0, 8, 8, 0]}
+            />
             </BarChart>
           </ResponsiveContainer>
           </Card>
@@ -232,25 +220,21 @@ export function Analytics() {
           <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-lg font-semibold text-foreground">
+              <p className="text-sm font-medium text-foreground">
                 Department performance snapshot
               </p>
-              <p className="mt-1 text-sm text-muted">
-                Recovery rates and current load at a glance.
-              </p>
             </div>
-            <Badge tone="info">Updated live</Badge>
           </div>
 
           <div className="mt-6 space-y-4">
             {departmentMetrics.map((metric) => (
               <div
-                className="rounded-[24px] border border-border bg-surface-elevated p-5"
+                className="rounded-xl border border-border bg-surface-elevated p-4"
                 key={metric.department}
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-medium text-foreground">
                       {metric.department}
                     </p>
                     <p className="mt-1 text-sm text-muted">
@@ -258,15 +242,15 @@ export function Analytics() {
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+                    <p className="text-xl font-bold tracking-[-0.03em] text-foreground">
                       {metric.recoveryRate}%
                     </p>
-                    <p className="text-xs uppercase tracking-[0.18em] text-subtle">
+                    <p className="text-xs text-subtle">
                       recovery
                     </p>
                   </div>
                 </div>
-                <div className="mt-4 flex items-center gap-2 text-xs font-medium uppercase tracking-[0.16em] text-subtle">
+                <div className="mt-3 flex items-center gap-2 text-xs font-medium text-subtle">
                   <span className="inline-flex rounded-full bg-primary-soft px-3 py-1 text-primary">
                     Strong recovery
                   </span>

@@ -15,19 +15,19 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-white shadow-[0_18px_36px_rgba(99,102,241,0.26)] hover:bg-[color-mix(in_srgb,var(--app-primary)_88%,white)]',
+    'bg-primary text-white hover:bg-[color-mix(in_srgb,var(--app-primary)_88%,white)]',
   secondary:
     'border border-border bg-surface text-foreground hover:bg-surface-elevated',
   ghost:
     'bg-transparent text-muted hover:bg-primary-soft hover:text-foreground',
   danger:
-    'bg-danger text-white shadow-[0_18px_36px_rgba(239,68,68,0.2)] hover:bg-[color-mix(in_srgb,var(--app-danger)_88%,white)]',
+    'bg-danger text-white hover:bg-[color-mix(in_srgb,var(--app-danger)_88%,white)]',
 }
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: 'h-9 rounded-xl px-3 text-sm',
-  md: 'h-11 rounded-2xl px-4 text-sm',
-  lg: 'h-12 rounded-2xl px-5 text-base',
+  md: 'h-11 rounded-xl px-4 text-sm',
+  lg: 'h-12 rounded-xl px-5 text-base',
 }
 
 export function Button({

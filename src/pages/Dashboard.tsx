@@ -68,27 +68,22 @@ function StatCard({ stat }: { stat: DashboardStat }) {
   const suffix = stat.id === 'avg-recovery-rate' ? '%' : ''
 
   return (
-    <Card className="overflow-hidden p-0">
-      <div className="flex items-start justify-between p-6">
-        <div>
-          <p className="text-sm font-medium text-muted">{stat.label}</p>
-          <p className="mt-5 text-4xl font-semibold tracking-[-0.05em] text-foreground">
+    <Card className="space-y-4 p-5">
+      <div className="flex items-center gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary-soft text-primary">
+          <Icon className="h-4 w-4" />
+        </div>
+        <p className="text-sm font-medium text-muted">{stat.label}</p>
+      </div>
+      <div className="space-y-2">
+        <p className="text-3xl font-bold tracking-[-0.04em] text-foreground">
             {animatedValue}
             {suffix}
-          </p>
-        </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-soft text-primary">
-          <Icon className="h-5 w-5" />
-        </div>
-      </div>
-      <div className="flex items-center justify-between border-t border-border px-6 py-4">
-        <div className={`flex items-center gap-1 text-sm font-semibold ${trendColor}`}>
-          <TrendIcon className="h-4 w-4" />
+        </p>
+        <div className={`flex items-center gap-1 text-xs font-medium ${trendColor}`}>
+          <TrendIcon className="h-3.5 w-3.5" />
           <span>{stat.change}%</span>
         </div>
-        <p className="text-xs uppercase tracking-[0.18em] text-subtle">
-          vs last week
-        </p>
       </div>
     </Card>
   )
@@ -99,10 +94,10 @@ function DashboardSkeleton() {
     <div className="space-y-6">
       <div className="grid gap-5 xl:grid-cols-4 md:grid-cols-2">
         {Array.from({ length: 4 }).map((_, index) => (
-          <Card key={`stat-skeleton-${index}`} className="space-y-4">
+          <Card key={`stat-skeleton-${index}`} className="space-y-3">
             <Skeleton className="h-4 w-24" />
-            <Skeleton className="h-10 w-28" />
-            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-8 w-24" />
+            <Skeleton className="h-4 w-16" />
           </Card>
         ))}
       </div>
@@ -157,16 +152,17 @@ export function Dashboard() {
         initial={{ opacity: 0, y: 12 }}
         transition={{ duration: 0.3 }}
       >
-        <Card className="overflow-hidden bg-[linear-gradient(140deg,var(--app-primary-soft),transparent_40%),var(--app-surface)]">
+        <Card>
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm font-medium uppercase tracking-[0.24em] text-accent">
+            <p className="flex items-center gap-2 text-sm font-medium text-muted">
+              <span className="h-2 w-2 rounded-full bg-accent" />
               Welcome back
             </p>
-            <h2 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-foreground">
+            <h2 className="mt-3 text-[28px] font-medium tracking-[-0.03em] text-foreground">
               {user?.name ?? 'Care team'}
             </h2>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-muted">
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
               Here’s your morning snapshot across admissions, critical care, and
               department-level momentum.
             </p>
@@ -175,7 +171,9 @@ export function Dashboard() {
             {quickActions.map(({ icon: Icon, label, to }) => (
               <Link
                 className={cn(
-                  'inline-flex min-w-40 items-center justify-center gap-2 rounded-2xl border border-border bg-surface px-4 py-3 text-sm font-medium text-foreground transition duration-200 hover:bg-surface-elevated',
+                  label === 'Add Patient'
+                    ? 'inline-flex min-w-36 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-medium text-white transition duration-200'
+                    : 'inline-flex min-w-36 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground transition duration-200 hover:bg-surface-elevated',
                 )}
                 key={label}
                 to={to}
@@ -211,7 +209,7 @@ export function Dashboard() {
           <Card>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-lg font-semibold text-foreground">Recent activity</p>
+              <p className="text-base font-medium text-foreground">Recent activity</p>
               <p className="mt-1 text-sm text-muted">
                 Latest patient updates from the last clinical rounds.
               </p>
@@ -222,12 +220,12 @@ export function Dashboard() {
           <div className="mt-6 space-y-4">
             {recentActivity.map((activity) => (
               <div
-                className="rounded-[24px] border border-border bg-surface-elevated p-4"
+                className="rounded-xl border border-border bg-surface-elevated p-4"
                 key={activity.id}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-medium text-foreground">
                       {activity.patientName}
                     </p>
                     <p className="mt-2 text-sm leading-6 text-muted">
@@ -236,7 +234,7 @@ export function Dashboard() {
                   </div>
                   <Badge status={activity.status} />
                 </div>
-                <p className="mt-4 text-xs uppercase tracking-[0.18em] text-subtle">
+                <p className="mt-4 text-xs text-subtle">
                   {new Date(activity.occurredAt).toLocaleString()}
                 </p>
               </div>
@@ -252,15 +250,15 @@ export function Dashboard() {
         >
           <Card>
           <div>
-            <p className="text-lg font-semibold text-foreground">Team priorities</p>
-            <p className="mt-1 text-sm text-muted">
-              Focus areas for today’s clinical operations.
-            </p>
+              <p className="text-base font-medium text-foreground">Team priorities</p>
+              <p className="mt-1 text-sm text-muted">
+                Focus areas for today’s clinical operations.
+              </p>
           </div>
 
           <div className="mt-6 space-y-4">
-            <div className="rounded-[24px] border border-border bg-surface-elevated p-5">
-              <p className="text-sm font-semibold text-foreground">
+            <div className="rounded-xl border border-border bg-surface-elevated p-4">
+              <p className="text-sm font-medium text-foreground">
                 Review all ICU critical cases before noon
               </p>
               <p className="mt-2 text-sm leading-6 text-muted">
@@ -268,8 +266,8 @@ export function Dashboard() {
                 Owen Turner all need specialist follow-up.
               </p>
             </div>
-            <div className="rounded-[24px] border border-border bg-surface-elevated p-5">
-              <p className="text-sm font-semibold text-foreground">
+            <div className="rounded-xl border border-border bg-surface-elevated p-4">
+              <p className="text-sm font-medium text-foreground">
                 Coordinate department recovery plans
               </p>
               <p className="mt-2 text-sm leading-6 text-muted">
@@ -277,8 +275,8 @@ export function Dashboard() {
                 requires closer discharge planning.
               </p>
             </div>
-            <div className="rounded-[24px] border border-border bg-surface-elevated p-5">
-              <p className="text-sm font-semibold text-foreground">
+            <div className="rounded-xl border border-border bg-surface-elevated p-4">
+              <p className="text-sm font-medium text-foreground">
                 Align afternoon appointment load
               </p>
               <p className="mt-2 text-sm leading-6 text-muted">

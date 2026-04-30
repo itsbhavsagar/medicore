@@ -1,11 +1,4 @@
-import {
-  ActivitySquare,
-  ChartSpline,
-  Hospital,
-  LayoutDashboard,
-  LogOut,
-  UsersRound,
-} from 'lucide-react'
+import { ChartSpline, Hospital, LayoutDashboard, LogOut, UsersRound } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { cn } from '../../utils/cn'
 import { Button } from '../ui/Button'
@@ -22,28 +15,28 @@ interface SidebarProps {
 
 export function Sidebar({ onLogout }: SidebarProps) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-[280px] shrink-0 flex-col border-r border-border bg-sidebar px-6 py-8 backdrop-blur-xl lg:flex">
+    <aside className="sticky top-0 hidden h-screen w-[272px] shrink-0 flex-col border-r border-border bg-sidebar px-5 py-7 backdrop-blur-xl lg:flex">
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,var(--app-primary),var(--app-accent))] text-white shadow-[0_20px_40px_rgba(99,102,241,0.24)]">
+        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
           <Hospital className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-lg font-semibold tracking-[-0.03em] text-foreground">
+          <p className="text-base font-medium tracking-[-0.02em] text-foreground">
             MediCore
           </p>
           <p className="text-sm text-subtle">Clinical intelligence suite</p>
         </div>
       </div>
 
-      <nav className="mt-10 space-y-2">
+      <nav className="mt-8 space-y-1">
         {navigationItems.map(({ icon: Icon, label, to }) => (
           <NavLink
             key={to}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition duration-200',
+                'flex items-center gap-3 rounded-r-xl border-l-2 border-transparent px-3 py-2.5 text-sm font-medium transition duration-200',
                 isActive
-                  ? 'bg-primary text-white shadow-[0_18px_36px_rgba(99,102,241,0.24)]'
+                  ? 'border-primary bg-primary/15 text-foreground'
                   : 'text-muted hover:bg-primary-soft hover:text-foreground',
               )
             }
@@ -55,19 +48,12 @@ export function Sidebar({ onLogout }: SidebarProps) {
         ))}
       </nav>
 
-      <div className="mt-auto rounded-[28px] border border-border bg-surface-elevated p-5 shadow-[var(--app-shadow)]">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-accent-soft text-accent">
-            <ActivitySquare className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-foreground">Operational pulse</p>
-            <p className="text-sm text-subtle">3 critical patients need review</p>
-          </div>
-        </div>
-
+      <div className="mt-auto space-y-4">
+        <p className="text-sm text-subtle">
+          3 critical patients need review this morning.
+        </p>
         <Button
-          className="mt-5 w-full justify-center"
+          className="w-full justify-center"
           onClick={onLogout}
           size="sm"
           variant="secondary"

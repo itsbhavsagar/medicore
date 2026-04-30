@@ -66,12 +66,12 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
   }
 
   return (
-    <Card className="rounded-[24px] border-primary/20 bg-[linear-gradient(145deg,var(--app-primary-soft),transparent_55%),var(--app-surface)] p-5">
+    <Card className="border-primary/20 bg-surface p-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <div className="flex items-center gap-3">
             <Bot className="h-5 w-5 text-primary" />
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-sm font-medium text-foreground">
               AI patient summary
             </p>
           </div>
@@ -100,14 +100,14 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
         </div>
       </div>
 
-      <div className="mt-5 rounded-[24px] border border-border bg-surface p-5">
+      <div className="mt-5 rounded-xl border border-border bg-surface-elevated p-5">
         {summary ? (
           <p className="whitespace-pre-wrap text-sm leading-7 text-foreground">
             {summary}
           </p>
         ) : (
           <div className="space-y-3">
-            <p className="text-sm font-semibold text-foreground">
+            <p className="text-sm font-medium text-foreground">
               Ready to generate contextual summary
             </p>
             <p className="text-sm leading-6 text-muted">
@@ -118,7 +118,7 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
         )}
 
         {error ? (
-          <div className="mt-4 rounded-2xl border border-danger/30 bg-[var(--status-critical-bg)] px-4 py-3 text-sm text-[var(--status-critical-text)]">
+          <div className="mt-4 text-sm text-muted">
             {error}
           </div>
         ) : null}

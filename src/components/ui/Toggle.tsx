@@ -11,7 +11,7 @@ export function Toggle({ checked, className, ...props }: ToggleProps) {
     <button
       aria-checked={checked}
       className={cn(
-        'relative inline-flex h-11 w-20 items-center rounded-full border border-border bg-surface px-1.5 shadow-[var(--app-shadow)] transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
+        'relative inline-flex h-11 w-20 items-center rounded-full border border-border bg-surface px-1.5 transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
         className,
       )}
       role="switch"

@@ -15,9 +15,9 @@ export function Card({
   return (
     <div
       className={cn(
-        'rounded-[28px] border border-border bg-surface p-6 shadow-[var(--app-shadow)] backdrop-blur-sm transition duration-200',
+        'rounded-xl border border-border bg-surface p-5 shadow-[var(--app-shadow)] transition duration-200',
         interactive &&
-          'cursor-pointer hover:-translate-y-0.5 hover:border-primary/35 hover:bg-surface-elevated',
+          'cursor-pointer hover:border-primary/20 hover:bg-surface-elevated',
         className,
       )}
       {...props}

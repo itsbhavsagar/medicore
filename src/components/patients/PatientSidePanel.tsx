@@ -41,12 +41,12 @@ export function PatientSidePanel({
             initial={{ opacity: 0, x: 32 }}
             transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
           >
-            <Card className="min-h-full rounded-[32px] bg-surface-elevated">
+            <Card className="min-h-full bg-surface-elevated p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-14 w-14 rounded-2xl text-base" name={patient.name} />
+                  <Avatar className="h-14 w-14 text-base" name={patient.name} status={patient.status} />
                   <div>
-                    <p className="text-2xl font-semibold tracking-[-0.04em] text-foreground">
+                    <p className="text-[28px] font-medium tracking-[-0.03em] text-foreground">
                       {patient.name}
                     </p>
                     <p className="mt-2 text-sm text-muted">
@@ -66,11 +66,11 @@ export function PatientSidePanel({
                 <Badge tone="neutral">Room {patient.roomNumber}</Badge>
               </div>
 
-              <div className="mt-8 grid gap-5 md:grid-cols-2">
-                <Card className="rounded-[24px] bg-surface p-5">
+              <div className="mt-10 grid gap-6">
+                <Card className="bg-surface p-5">
                   <div className="flex items-center gap-3">
                     <Stethoscope className="h-5 w-5 text-primary" />
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-medium text-foreground">
                       Care ownership
                     </p>
                   </div>
@@ -81,10 +81,10 @@ export function PatientSidePanel({
                     Diagnosis: {patient.diagnosis}
                   </p>
                 </Card>
-                <Card className="rounded-[24px] bg-surface p-5">
+                <Card className="bg-surface p-5">
                   <div className="flex items-center gap-3">
                     <UserRoundX className="h-5 w-5 text-accent" />
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-medium text-foreground">
                       Emergency contact
                     </p>
                   </div>
@@ -99,52 +99,52 @@ export function PatientSidePanel({
                 </Card>
               </div>
 
-              <div className="mt-8 grid gap-5">
-                <Card className="rounded-[24px] bg-surface p-5">
+              <div className="mt-10 grid gap-6">
+                <Card className="bg-surface p-5">
                   <div className="flex items-center gap-3">
                     <Activity className="h-5 w-5 text-primary" />
-                    <p className="text-sm font-semibold text-foreground">Vitals</p>
+                    <p className="text-sm font-medium text-foreground">Vitals</p>
                   </div>
-                  <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <div className="rounded-2xl border border-border bg-surface-elevated p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-subtle">
+                  <div className="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-4">
+                    <div>
+                      <p className="text-xs text-subtle">
                         Heart rate
                       </p>
-                      <p className="mt-3 text-xl font-semibold text-foreground">
+                      <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.heartRate} bpm
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-surface-elevated p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-subtle">
+                    <div>
+                      <p className="text-xs text-subtle">
                         Blood pressure
                       </p>
-                      <p className="mt-3 text-xl font-semibold text-foreground">
+                      <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.bloodPressure}
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-surface-elevated p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-subtle">
+                    <div>
+                      <p className="text-xs text-subtle">
                         Temperature
                       </p>
-                      <p className="mt-3 text-xl font-semibold text-foreground">
+                      <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.temperature}°C
                       </p>
                     </div>
-                    <div className="rounded-2xl border border-border bg-surface-elevated p-4">
-                      <p className="text-xs uppercase tracking-[0.18em] text-subtle">
+                    <div>
+                      <p className="text-xs text-subtle">
                         O2 saturation
                       </p>
-                      <p className="mt-3 text-xl font-semibold text-foreground">
+                      <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.oxygenSaturation}%
                       </p>
                     </div>
                   </div>
                 </Card>
 
-                <Card className="rounded-[24px] bg-surface p-5">
+                <Card className="bg-surface p-5">
                   <div className="flex items-center gap-3">
                     <Pill className="h-5 w-5 text-accent" />
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-medium text-foreground">
                       Active medications
                     </p>
                   </div>

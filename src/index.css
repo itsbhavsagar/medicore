@@ -24,7 +24,7 @@
   --app-chart-5: #f97316;
   --app-chart-6: #8b5cf6;
   --app-chart-7: #10b981;
-  --app-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
+  --app-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
   --app-glow: radial-gradient(circle at top, rgba(34, 211, 238, 0.16), transparent 45%);
   --status-critical-bg: rgba(239, 68, 68, 0.12);
   --status-critical-text: #b91c1c;
@@ -59,7 +59,7 @@
   --app-chart-5: #fb923c;
   --app-chart-6: #a78bfa;
   --app-chart-7: #34d399;
-  --app-shadow: 0 28px 80px rgba(2, 6, 23, 0.42);
+  --app-shadow: 0 4px 16px rgba(2, 6, 23, 0.2);
   --app-glow: radial-gradient(circle at top, rgba(34, 211, 238, 0.12), transparent 45%);
   --status-critical-bg: rgba(248, 113, 113, 0.12);
   --status-critical-text: #fda4af;

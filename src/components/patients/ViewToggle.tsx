@@ -23,7 +23,7 @@ export function ViewToggle({ onChange, value }: ViewToggleProps) {
             className={cn(
               'inline-flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-medium transition duration-200',
               active
-                ? 'bg-primary text-white shadow-[0_14px_30px_rgba(99,102,241,0.24)]'
+                ? 'bg-primary text-white'
                 : 'text-muted hover:text-foreground',
             )}
             key={optionValue}

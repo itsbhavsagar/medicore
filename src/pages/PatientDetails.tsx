@@ -5,7 +5,6 @@ import { PatientCard } from '../components/patients/PatientCard'
 import { PatientRow } from '../components/patients/PatientRow'
 import { PatientSidePanel } from '../components/patients/PatientSidePanel'
 import { ViewToggle } from '../components/patients/ViewToggle'
-import { Badge } from '../components/ui/Badge'
 import { Card } from '../components/ui/Card'
 import { usePatients } from '../hooks/usePatients'
 
@@ -34,14 +33,17 @@ export function PatientDetails() {
 
   return (
     <div className="space-y-6">
-      <Card className="overflow-hidden bg-[linear-gradient(145deg,var(--app-primary-soft),transparent_40%),var(--app-surface)]">
+      <Card>
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <Badge tone="info">Patient directory</Badge>
-            <h2 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-foreground">
+            <p className="flex items-center gap-2 text-sm font-medium text-muted">
+              <span className="h-2 w-2 rounded-full bg-accent" />
+              patients
+            </p>
+            <h2 className="mt-3 text-[28px] font-medium tracking-[-0.03em] text-foreground">
               Search and review active patient records
             </h2>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-muted">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
               Switch between a quick-scan grid and a denser list view while
               keeping the current patient selection in shared state.
             </p>
@@ -54,7 +56,7 @@ export function PatientDetails() {
         <div className="relative w-full max-w-xl">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" />
           <input
-            className="h-12 w-full rounded-2xl border border-border bg-surface px-12 text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
+            className="h-12 w-full rounded-xl border border-border bg-surface px-12 text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
             onChange={(event) => setLocalSearch(event.target.value)}
             placeholder="Search by patient, diagnosis, doctor, department, or room"
             type="search"
@@ -90,7 +92,7 @@ export function PatientDetails() {
             key="list-view"
             transition={{ duration: 0.22 }}
           >
-            <div className="hidden grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] gap-4 px-5 text-xs font-semibold uppercase tracking-[0.18em] text-subtle xl:grid">
+            <div className="hidden grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] gap-4 px-5 text-xs font-medium text-subtle xl:grid">
               <span>Patient</span>
               <span>Diagnosis</span>
               <span>Status</span>
