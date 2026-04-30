@@ -1,11 +1,11 @@
-import { motion } from 'framer-motion'
+import { motion, type Transition } from 'framer-motion'
 import type { ReactNode } from 'react'
 
 interface PageWrapperProps {
   children: ReactNode
 }
 
-const transition = {
+const transition: Transition = {
   duration: 0.28,
   ease: [0.16, 1, 0.3, 1],
 }

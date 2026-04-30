@@ -1,73 +1,109 @@
-# React + TypeScript + Vite
+# MediCore
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+MediCore is a production-style B2B healthcare SaaS dashboard built for a frontend engineering assignment. The app focuses on operational visibility for care teams: secure Firebase sign-in, a themed analytics workspace, searchable patient records, and a Groq-powered streaming AI summary inside the patient details panel.
 
-Currently, two official plugins are available:
+Live demo link: [http://localhost:5173](http://localhost:5173)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Project overview
 
-## React Compiler
+- `Dashboard`: operational KPIs, recent activity feed, quick actions, and loading skeletons.
+- `Analytics`: themed Recharts line, pie, and bar visualizations with date-range controls.
+- `Patients`: debounced search, grid/list toggle, motion transitions, side panel details, and AI summary streaming.
+- `Notifications`: service-worker-backed local notifications after login and AI summary completion.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Architecture decisions
 
-## Expanding the ESLint configuration
+### Why Vite over CRA
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Vite gives much faster cold starts and HMR, which matters when iterating on a dashboard with many components and charts.
+- The Vite proxy made it straightforward to forward `/api/ai-summary` requests to a lightweight local Express server during development.
+- The project uses modern ESM-friendly tooling out of the box, which pairs well with React 19 and current frontend libraries.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Why Zustand over Redux
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- The app state is small and domain-focused: auth, theme, notifications, and patient browsing state.
+- Zustand keeps the store layer minimal without reducers, action constants, or boilerplate that would slow down an assignment build without adding meaningful structure here.
+- Stores remain easy to test and reason about because each slice is isolated and typed.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Frontend structure
+
+- `src/components/ui`: reusable design-system primitives.
+- `src/components/layout`: chrome shared across authenticated routes.
+- `src/components/patients`: patient-specific building blocks and the AI summary panel.
+- `src/store`: Zustand slices for auth, patients, theme, and notifications.
+- `src/services`: Firebase, AI streaming, and browser notification boundaries.
+- `server/ai-server.mjs`: Express endpoint that streams Groq completions to the frontend.
+
+## AI feature: how streaming works
+
+1. The patient side panel sends the selected patient record to `/api/ai-summary`.
+2. Vite proxies that request to the local Express server on port `8787`.
+3. The Express handler calls Groq with the `llama-3.1-8b-instant` model in streaming mode.
+4. Each streamed delta is written back to the HTTP response as it arrives.
+5. The React client reads the `ReadableStream` with `response.body.getReader()` and appends tokens into the UI progressively.
+6. Users can stop the stream with `AbortController`, and the button stays locked while generation is active.
+
+## Setup instructions
+
+### 1. Install dependencies
+
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Add environment variables
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Create a `.env` file in the project root using `.env.example` as a template.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Required Vite / Firebase variables:
+
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_FIREBASE_MESSAGING_SENDER_ID`
+
+Required backend variable:
+
+- `GROQ_API_KEY`
+
+### 3. Run the app
+
+Frontend only:
+
+```bash
+npm run dev
 ```
+
+Frontend + AI server together:
+
+```bash
+npm run dev:full
+```
+
+AI server only:
+
+```bash
+npm run server
+```
+
+## Key implementation notes
+
+- Theme preference is persisted in `localStorage` and seeded from system preference on first load.
+- All major colors are controlled through CSS variables so dark and light mode stay consistent.
+- Route-level transitions, panel transitions, grid/list transitions, and stat-card load motion are handled with Framer Motion.
+- Notifications are delivered through a registered service worker and focus the app window when clicked.
+
+## Known limitations
+
+- Firebase configuration is required before login will succeed; there is no mock-auth fallback because the assignment explicitly asked for Firebase email/password auth.
+- The AI server is intended for local development and would need deployment hardening, request auth, and rate limiting for production.
+- Recharts tooltip styling still relies on chart-level props because chart internals are less class-driven than the rest of the UI.
+
+## What I would add with more time
+
+- Role-based permissions and route-level authorization.
+- Real API data fetching with React Query or server-state caching.
+- Test coverage for auth flows, stores, and streaming behavior.
+- Better mobile nav behavior for the sidebar trigger.
+- Persistent in-app notification center instead of count-only alert badges.

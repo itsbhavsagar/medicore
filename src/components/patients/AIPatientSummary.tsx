@@ -29,8 +29,6 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
     setIsStreaming(true)
 
     try {
-      const seedLength = "Based on the patient's records, ".length
-
       await streamAiPatientSummary({
         onToken: (token) => {
           setSummary((current) => current + token)
