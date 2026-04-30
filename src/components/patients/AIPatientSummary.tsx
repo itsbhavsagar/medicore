@@ -1,69 +1,76 @@
-import { Bot, Sparkles, Square } from 'lucide-react'
-import { useRef, useState } from 'react'
-import { useNotifications } from '../../hooks/useNotifications'
-import { showAppNotification } from '../../services/notifications'
-import type { Patient } from '../../types'
-import { streamAiPatientSummary } from '../../services/ai'
-import { Badge } from '../ui/Badge'
-import { Button } from '../ui/Button'
-import { Card } from '../ui/Card'
+import { Bot, Sparkles, Square } from "lucide-react";
+import { useRef, useState } from "react";
+import { useNotifications } from "../../hooks/useNotifications";
+import { showAppNotification } from "../../services/notifications";
+import type { Patient } from "../../types";
+import { streamAiPatientSummary } from "../../services/ai";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
 
 interface AIPatientSummaryProps {
-  patient: Patient
+  patient: Patient;
 }
 
 export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
-  const { add } = useNotifications()
-  const controllerRef = useRef<AbortController | null>(null)
-  const [summary, setSummary] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [isStreaming, setIsStreaming] = useState(false)
+  const { add } = useNotifications();
+  const controllerRef = useRef<AbortController | null>(null);
+  const [summary, setSummary] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [generatedOnce, setGeneratedOnce] = useState(false);
 
   const handleGenerate = async () => {
-    controllerRef.current?.abort()
-    const controller = new AbortController()
-    controllerRef.current = controller
+    if (generatedOnce || isStreaming) return;
 
-    setSummary("Based on the patient's records, ")
-    setError(null)
-    setIsStreaming(true)
+    controllerRef.current?.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
+
+    setSummary("Based on the patient's records, ");
+    setError(null);
+    setIsStreaming(true);
 
     try {
       await streamAiPatientSummary({
         onToken: (token) => {
-          setSummary((current) => current + token)
+          setSummary((current) => current + token);
         },
         patient,
         signal: controller.signal,
-      })
+      });
+
+      setGeneratedOnce(true);
+
       add({
         id: `ai-summary-${patient.id}`,
         message: `AI Summary ready for ${patient.name}`,
-        title: 'AI Summary ready',
-      })
+        title: "AI Summary ready",
+      });
+
       await showAppNotification(
-        'AI Summary ready',
+        "AI Summary ready",
         `AI Summary ready for ${patient.name}`,
-      )
+      );
     } catch (streamError) {
       if (controller.signal.aborted) {
-        setSummary((current) => current || 'Summary generation was stopped.')
+        setSummary((current) => current || "Summary generation was stopped.");
       } else {
         setError(
           streamError instanceof Error
             ? streamError.message
-            : 'Unable to generate summary.',
-        )
+            : "Unable to generate summary.",
+        );
       }
     } finally {
-      setIsStreaming(false)
-      controllerRef.current = null
+      setIsStreaming(false);
+      controllerRef.current = null;
     }
-  }
+  };
 
   const handleStop = () => {
-    controllerRef.current?.abort()
-  }
+    controllerRef.current?.abort();
+  };
 
   return (
     <Card className="border-primary/20 bg-surface p-5">
@@ -87,13 +94,15 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
             loading={isStreaming}
             onClick={handleGenerate}
             variant="primary"
+            className="cursor-pointer"
+            disabled={generatedOnce}
           >
-            <Sparkles className="h-4 w-4" />
-            Generate AI Summary
+            <Sparkles className="h-4 w-4 inline-flex! mr-2" />
+            {generatedOnce ? "Already Generated" : "Generate AI Summary"}
           </Button>
           {isStreaming ? (
             <Button onClick={handleStop} variant="danger">
-              <Square className="h-4 w-4" />
+              <Square className="h-4 w-4 inline-flex! mr-2" />
               Stop
             </Button>
           ) : null}
@@ -117,12 +126,8 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
           </div>
         )}
 
-        {error ? (
-          <div className="mt-4 text-sm text-muted">
-            {error}
-          </div>
-        ) : null}
+        {error ? <div className="mt-4 text-sm text-muted">{error}</div> : null}
       </div>
     </Card>
-  )
+  );
 }

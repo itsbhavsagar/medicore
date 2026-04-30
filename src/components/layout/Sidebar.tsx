@@ -1,21 +1,27 @@
-import { ChartSpline, Hospital, LayoutDashboard, LogOut, UsersRound } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
-import { cn } from '../../utils/cn'
-import { Button } from '../ui/Button'
+import {
+  ChartSpline,
+  Hospital,
+  LayoutDashboard,
+  LogOut,
+  UsersRound,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { cn } from "../../utils/cn";
+import { Button } from "../ui/Button";
 
 const navigationItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/analytics', label: 'Analytics', icon: ChartSpline },
-  { to: '/patients', label: 'Patients', icon: UsersRound },
-]
+  { to: "/", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/analytics", label: "Analytics", icon: ChartSpline },
+  { to: "/patients", label: "Patients", icon: UsersRound },
+];
 
 interface SidebarProps {
-  onLogout?: () => void
+  onLogout?: () => void;
 }
 
 export function Sidebar({ onLogout }: SidebarProps) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-[272px] shrink-0 flex-col border-r border-border bg-sidebar px-5 py-7 backdrop-blur-xl lg:flex">
+    <aside className="sticky top-0 hidden h-screen w-68 shrink-0 flex-col border-r border-border bg-sidebar px-5 py-7 backdrop-blur-xl lg:flex">
       <div className="flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary-soft text-primary">
           <Hospital className="h-6 w-6" />
@@ -34,10 +40,10 @@ export function Sidebar({ onLogout }: SidebarProps) {
             key={to}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-3 rounded-r-xl border-l-2 border-transparent px-3 py-2.5 text-sm font-medium transition duration-200',
+                "flex items-center gap-3 rounded-r-xl border-l-2 border-transparent px-3 py-2.5 text-sm font-medium transition duration-200",
                 isActive
-                  ? 'border-primary bg-primary/15 text-foreground'
-                  : 'text-muted hover:bg-primary-soft hover:text-foreground',
+                  ? "border-primary bg-primary/15 text-foreground"
+                  : "text-muted hover:bg-primary-soft hover:text-foreground",
               )
             }
             to={to}
@@ -53,17 +59,17 @@ export function Sidebar({ onLogout }: SidebarProps) {
           3 critical patients need review this morning.
         </p>
         <Button
-          className="w-full cursor-pointer justify-center gap-2.5 rounded-xl"
+          className="w-full flex items-center justify-center gap-2.5 rounded-xl cursor-pointer"
           onClick={onLogout}
           size="sm"
           variant="secondary"
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-soft text-primary">
-            <LogOut className="h-3.5 w-3.5" />
+          <span className=" inline-flex! h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary mr-4">
+            <LogOut className="h-4 w-4" />
           </span>
-          Sign out
+          <span className="inline-flex items-center">Sign out</span>
         </Button>
       </div>
     </aside>
-  )
+  );
 }

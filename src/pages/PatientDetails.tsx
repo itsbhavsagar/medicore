@@ -1,19 +1,19 @@
-import { Search } from 'lucide-react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { AddPatientModal } from '../components/patients/AddPatientModal'
-import { PatientCard } from '../components/patients/PatientCard'
-import { PatientRow } from '../components/patients/PatientRow'
-import { PatientSidePanel } from '../components/patients/PatientSidePanel'
-import { ViewToggle } from '../components/patients/ViewToggle'
-import { Button } from '../components/ui/Button'
-import { Card } from '../components/ui/Card'
-import { useNotifications } from '../hooks/useNotifications'
-import { usePatients } from '../hooks/usePatients'
+import { Search } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { AddPatientModal } from "../components/patients/AddPatientModal";
+import { PatientCard } from "../components/patients/PatientCard";
+import { PatientRow } from "../components/patients/PatientRow";
+import { PatientSidePanel } from "../components/patients/PatientSidePanel";
+import { ViewToggle } from "../components/patients/ViewToggle";
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+import { useNotifications } from "../hooks/useNotifications";
+import { usePatients } from "../hooks/usePatients";
 
-const SEARCH_DEBOUNCE_MS = 250
-const pageSizeOptions = [5, 10, 25] as const
+const SEARCH_DEBOUNCE_MS = 250;
+const pageSizeOptions = [5, 10, 25, 100] as const;
 
 export function PatientDetails() {
   const {
@@ -25,38 +25,52 @@ export function PatientDetails() {
     setSearch,
     setView,
     viewMode,
-  } = usePatients()
-  const { add: addNotification } = useNotifications()
-  const [searchParams, setSearchParams] = useSearchParams()
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState<(typeof pageSizeOptions)[number]>(10)
-  const [localSearch, setLocalSearch] = useState(searchQuery)
-  const isAddModalOpen = searchParams.get('new') === '1'
+  } = usePatients();
+  const { add: addNotification } = useNotifications();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<(typeof pageSizeOptions)[number]>(5);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const isAddModalOpen = searchParams.get("new") === "1";
 
-  const totalPages = Math.max(1, Math.ceil(filteredPatients.length / pageSize))
-  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const totalPages = Math.max(1, Math.ceil(filteredPatients.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
   const paginatedPatients = useMemo(() => {
-    const startIndex = (safeCurrentPage - 1) * pageSize
+    const startIndex = (safeCurrentPage - 1) * pageSize;
 
-    return filteredPatients.slice(startIndex, startIndex + pageSize)
-  }, [filteredPatients, pageSize, safeCurrentPage])
+    return filteredPatients.slice(startIndex, startIndex + pageSize);
+  }, [filteredPatients, pageSize, safeCurrentPage]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(
       () => setSearch(localSearch),
       SEARCH_DEBOUNCE_MS,
-    )
+    );
 
-    return () => window.clearTimeout(timeoutId)
-  }, [localSearch, setSearch])
+    return () => window.clearTimeout(timeoutId);
+  }, [localSearch, setSearch]);
 
   const openAddPatient = () => {
-    setSearchParams({ new: '1' })
-  }
+    setSearchParams({ new: "1" });
+  };
 
   const closeAddPatient = () => {
-    setSearchParams({})
-  }
+    setSearchParams({});
+  };
+
+  const visiblePages = useMemo(() => {
+    const maxVisiblePages = 5;
+    const halfWindow = Math.floor(maxVisiblePages / 2);
+    let startPage = Math.max(1, safeCurrentPage - halfWindow);
+    const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+
+    return Array.from(
+      { length: endPage - startPage + 1 },
+      (_, index) => startPage + index,
+    );
+  }, [safeCurrentPage, totalPages]);
 
   return (
     <div className="space-y-6">
@@ -78,8 +92,8 @@ export function PatientDetails() {
           <div className="flex items-center gap-3">
             <ViewToggle
               onChange={(value) => {
-                setView(value)
-                setCurrentPage(1)
+                setView(value);
+                setCurrentPage(1);
               }}
               value={viewMode}
             />
@@ -97,42 +111,38 @@ export function PatientDetails() {
             <input
               className="h-12 w-full rounded-xl border border-border bg-surface px-12 text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
               onChange={(event) => {
-                setLocalSearch(event.target.value)
-                setCurrentPage(1)
+                setLocalSearch(event.target.value);
+                setCurrentPage(1);
               }}
               placeholder="Search by patient, diagnosis, doctor, department, or room"
               type="search"
               value={localSearch}
             />
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted">
-            <span>Rows per page</span>
-            {pageSizeOptions.map((option) => (
-              <button
-                className={
-                  option === pageSize
-                    ? 'cursor-pointer rounded-full bg-primary-soft px-3 py-1 text-sm font-medium text-foreground'
-                    : 'cursor-pointer rounded-full px-3 py-1 text-sm font-medium text-muted'
-                }
-                key={option}
-                onClick={() => {
-                  setPageSize(option)
-                  setCurrentPage(1)
-                }}
-                type="button"
-              >
-                {option}
-              </button>
-            ))}
-          </div>
         </div>
-        <p className="text-sm text-muted">
-          Showing {paginatedPatients.length} of {filteredPatients.length} patients
-        </p>
+        <div className="flex items-center gap-2 text-sm text-muted">
+          <span>Rows per page</span>
+          <select
+            className="h-9 cursor-pointer rounded-xl border border-border bg-surface px-3 text-sm text-foreground outline-none"
+            onChange={(event) => {
+              setPageSize(
+                Number(event.target.value) as (typeof pageSizeOptions)[number],
+              );
+              setCurrentPage(1);
+            }}
+            value={pageSize}
+          >
+            {pageSizeOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
-        {viewMode === 'grid' ? (
+        {viewMode === "grid" ? (
           <motion.section
             animate={{ opacity: 1, y: 0 }}
             className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
@@ -171,8 +181,8 @@ export function PatientDetails() {
           </motion.section>
         )}
       </AnimatePresence>
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 md:flex-row md:items-center md:justify-end">
-        <div className="flex items-center gap-3">
+      <div className="flex justify-center rounded-xl border border-border bg-surface p-4">
+        <div className="flex flex-wrap items-center justify-center gap-2">
           <Button
             className="cursor-pointer"
             disabled={safeCurrentPage === 1}
@@ -182,13 +192,26 @@ export function PatientDetails() {
           >
             Previous
           </Button>
-          <p className="text-sm text-muted">
-            Page {safeCurrentPage} of {totalPages}
-          </p>
+          {visiblePages.map((page) => (
+            <button
+              className={
+                page === safeCurrentPage
+                  ? "h-9 min-w-9 cursor-pointer rounded-xl bg-primary text-sm font-medium text-white"
+                  : "h-9 min-w-9 cursor-pointer rounded-xl border border-border bg-surface text-sm font-medium text-foreground"
+              }
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              type="button"
+            >
+              {page}
+            </button>
+          ))}
           <Button
             className="cursor-pointer"
             disabled={safeCurrentPage === totalPages}
-            onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+            onClick={() =>
+              setCurrentPage((page) => Math.min(totalPages, page + 1))
+            }
             size="sm"
             variant="secondary"
           >
@@ -205,14 +228,14 @@ export function PatientDetails() {
         isOpen={isAddModalOpen}
         onClose={closeAddPatient}
         onSubmit={(patient) => {
-          const createdPatient = addPatient(patient)
+          const createdPatient = addPatient(patient);
           addNotification({
             id: `patient-created-${createdPatient.id}`,
             message: `${createdPatient.name} was added to the patient roster.`,
-            title: 'Patient added',
-          })
+            title: "Patient added",
+          });
         }}
       />
     </div>
-  )
+  );
 }

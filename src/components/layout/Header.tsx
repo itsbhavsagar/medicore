@@ -1,23 +1,25 @@
-import { Bell, Menu, X } from 'lucide-react'
-import { useState } from 'react'
-import { useNotifications } from '../../hooks/useNotifications'
-import { useThemeStore } from '../../store/themeStore'
-import { Avatar } from '../ui/Avatar'
-import { Button } from '../ui/Button'
-import { Toggle } from '../ui/Toggle'
+import { Bell, Menu, X } from "lucide-react";
+import { useState } from "react";
+import { useNotifications } from "../../hooks/useNotifications";
+import { useThemeStore } from "../../store/themeStore";
+import { Avatar } from "../ui/Avatar";
+import { Button } from "../ui/Button";
+import { Toggle } from "../ui/Toggle";
 
 interface HeaderProps {
-  title: string
-  subtitle: string
-  userName: string
+  title: string;
+  subtitle: string;
+  userName: string;
 }
 
 export function Header({ subtitle, title, userName }: HeaderProps) {
-  const [isAlertOpen, setIsAlertOpen] = useState(false)
-  const { dismiss, markAllRead, notifications } = useNotifications()
-  const theme = useThemeStore((state) => state.theme)
-  const toggleTheme = useThemeStore((state) => state.toggle)
-  const unreadCount = notifications.filter((notification) => !notification.read).length
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const { dismiss, markAllRead, notifications } = useNotifications();
+  const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggle);
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read,
+  ).length;
 
   return (
     <header className="flex flex-col gap-5 border-b border-border px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
@@ -37,32 +39,38 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
         </div>
       </div>
 
-      <div className="relative flex flex-wrap items-center gap-3">
+      <div className="relative flex flex-wrap items-center gap-3 ">
         <Toggle
           aria-label="Toggle theme"
-          checked={theme === 'dark'}
+          checked={theme === "dark"}
           onClick={toggleTheme}
+          className="cursor-pointer"
         />
         <Button
-          className="cursor-pointer gap-2.5"
+          className="cursor-pointer gap-2.5 "
           onClick={() => {
-            setIsAlertOpen((current) => !current)
+            setIsAlertOpen((current) => !current);
             if (!isAlertOpen) {
-              markAllRead()
+              markAllRead();
             }
           }}
           size="sm"
           variant="secondary"
         >
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-soft text-primary">
+          <span className=" inline-flex! h-6 w-6 items-center justify-center rounded-full bg-primary-soft text-primary mr-4">
             <Bell className="h-3.5 w-3.5" />
           </span>
-          Alerts {notifications.length > 0 ? `(${unreadCount || notifications.length})` : ''}
+          Alerts{" "}
+          {notifications.length > 0
+            ? `(${unreadCount || notifications.length})`
+            : ""}
         </Button>
         {isAlertOpen ? (
-          <div className="absolute right-0 top-14 z-30 w-[340px] rounded-xl border border-border bg-surface p-4 shadow-[var(--app-shadow)]">
+          <div className="absolute right-0 top-14 z-30 w-85 rounded-xl border border-border bg-surface p-4 shadow-(--app-shadow)">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-foreground">Notifications</p>
+              <p className="text-sm font-medium text-foreground">
+                Notifications
+              </p>
               <Button
                 className="cursor-pointer"
                 onClick={() => setIsAlertOpen(false)}
@@ -111,5 +119,5 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
         </div>
       </div>
     </header>
-  )
+  );
 }

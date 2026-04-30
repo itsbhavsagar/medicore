@@ -1,6 +1,9 @@
 import cors from 'cors'
+import dotenv from 'dotenv'
 import express from 'express'
 import Groq from 'groq-sdk'
+
+dotenv.config()
 
 const app = express()
 const PORT = Number(process.env.AI_SERVER_PORT ?? 8787)
