@@ -1,40 +1,71 @@
 import Groq from "groq-sdk";
 
-export const config = {
-  runtime: "nodejs",
-};
-
 const MODEL_NAME = "llama-3.1-8b-instant";
 
-export default async function handler(request: Request): Promise<Response> {
+type JsonValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JsonValue[]
+  | { [key: string]: JsonValue };
+
+interface VercelLikeRequest {
+  body?: JsonValue | string;
+  method?: string;
+}
+
+interface VercelLikeResponse {
+  json: (payload: unknown) => void;
+  setHeader: (name: string, value: string) => void;
+  status: (code: number) => VercelLikeResponse;
+}
+
+interface PatientPayload {
+  patient?: JsonValue;
+}
+
+const parseBody = (body: VercelLikeRequest["body"]): PatientPayload => {
+  if (typeof body === "string") {
+    try {
+      return JSON.parse(body) as PatientPayload;
+    } catch {
+      return {};
+    }
+  }
+
+  if (body && typeof body === "object" && !Array.isArray(body)) {
+    return body as PatientPayload;
+  }
+
+  return {};
+};
+
+export default async function handler(
+  request: VercelLikeRequest,
+  response: VercelLikeResponse,
+) {
   if (request.method !== "POST") {
-    return Response.json(
-      { error: "Method not allowed. Use POST." },
-      {
-        status: 405,
-        headers: {
-          Allow: "POST",
-        },
-      },
-    );
+    response.setHeader("Allow", "POST");
+    return response.status(405).json({
+      error: "Method not allowed. Use POST.",
+    });
   }
 
   if (!process.env.GROQ_API_KEY) {
-    return Response.json(
-      { error: "Missing GROQ_API_KEY environment variable." },
-      { status: 500 },
-    );
+    return response.status(500).json({
+      error: "Missing GROQ_API_KEY environment variable.",
+    });
   }
 
   try {
-    const body = await request.json();
-    const patient = body?.patient;
+    const payload = parseBody(request.body);
+    const patient = payload.patient;
 
     if (!patient) {
-      return Response.json(
-        { error: "Patient payload is required." },
-        { status: 400 },
-      );
+      return response.status(400).json({
+        error: "Patient payload is required.",
+      });
     }
 
     const groq = new Groq({
@@ -60,19 +91,18 @@ export default async function handler(request: Request): Promise<Response> {
     const summary = completion.choices[0]?.message?.content?.trim();
 
     if (!summary) {
-      return Response.json(
-        { error: "No summary was generated." },
-        { status: 500 },
-      );
+      return response.status(500).json({
+        error: "No summary was generated.",
+      });
     }
 
-    return Response.json({ summary }, { status: 200 });
+    return response.status(200).json({ summary });
   } catch (error) {
     const message =
       error instanceof Error
         ? error.message
         : "Failed to generate AI summary.";
 
-    return Response.json({ error: message }, { status: 500 });
+    return response.status(500).json({ error: message });
   }
 }
