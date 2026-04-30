@@ -1,14 +1,18 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { Header } from './components/layout/Header'
 import { PageWrapper } from './components/layout/PageWrapper'
 import { Sidebar } from './components/layout/Sidebar'
 import { useAuth } from './hooks/useAuth'
+import { useNotifications } from './hooks/useNotifications'
 import { Analytics } from './pages/Analytics'
 import { Dashboard } from './pages/Dashboard'
 import { Login } from './pages/Login'
 import { PatientDetails } from './pages/PatientDetails'
+import { showAppNotification } from './services/notifications'
 import { useThemeStore } from './store/themeStore'
+
+const CRITICAL_PATIENT_ALERT_COUNT = 3
 
 const routeMetadata: Record<string, { title: string; subtitle: string }> = {
   '/': {
@@ -28,7 +32,25 @@ const routeMetadata: Record<string, { title: string; subtitle: string }> = {
 function AppLayout() {
   const location = useLocation()
   const { logout, user } = useAuth()
+  const { add } = useNotifications()
+  const welcomeNotificationUserId = useRef<string | null>(null)
   const metadata = routeMetadata[location.pathname] ?? routeMetadata['/']
+
+  useEffect(() => {
+    if (!user || welcomeNotificationUserId.current === user.uid) {
+      return
+    }
+
+    welcomeNotificationUserId.current = user.uid
+    const body = `Welcome back, ${user.name}. You have ${CRITICAL_PATIENT_ALERT_COUNT} critical patients today.`
+
+    add({
+      id: `welcome-${user.uid}`,
+      message: body,
+      title: 'Welcome back',
+    })
+    void showAppNotification('Welcome back', body)
+  }, [add, user])
 
   return (
     <div className="medicore-shell flex min-h-screen bg-background text-foreground">

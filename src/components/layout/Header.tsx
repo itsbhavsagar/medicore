@@ -1,4 +1,5 @@
 import { Bell, Menu } from 'lucide-react'
+import { useNotifications } from '../../hooks/useNotifications'
 import { useThemeStore } from '../../store/themeStore'
 import { Avatar } from '../ui/Avatar'
 import { Button } from '../ui/Button'
@@ -11,6 +12,7 @@ interface HeaderProps {
 }
 
 export function Header({ subtitle, title, userName }: HeaderProps) {
+  const notifications = useNotifications().notifications
   const theme = useThemeStore((state) => state.theme)
   const toggleTheme = useThemeStore((state) => state.toggle)
 
@@ -39,7 +41,7 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
         />
         <Button size="sm" variant="secondary">
           <Bell className="h-4 w-4" />
-          Alerts
+          Alerts {notifications.length > 0 ? `(${notifications.length})` : ''}
         </Button>
         <div className="flex items-center gap-3 rounded-2xl border border-border bg-surface px-3 py-2">
           <Avatar className="h-10 w-10 rounded-xl text-xs" name={userName} />

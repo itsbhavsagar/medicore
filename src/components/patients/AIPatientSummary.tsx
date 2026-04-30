@@ -1,5 +1,7 @@
 import { Bot, Sparkles, Square } from 'lucide-react'
 import { useRef, useState } from 'react'
+import { useNotifications } from '../../hooks/useNotifications'
+import { showAppNotification } from '../../services/notifications'
 import type { Patient } from '../../types'
 import { streamAiPatientSummary } from '../../services/ai'
 import { Badge } from '../ui/Badge'
@@ -11,6 +13,7 @@ interface AIPatientSummaryProps {
 }
 
 export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
+  const { add } = useNotifications()
   const controllerRef = useRef<AbortController | null>(null)
   const [summary, setSummary] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -30,13 +33,20 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
 
       await streamAiPatientSummary({
         onToken: (token) => {
-          setSummary((current) =>
-            current.length <= seedLength ? current + token : current + token,
-          )
+          setSummary((current) => current + token)
         },
         patient,
         signal: controller.signal,
       })
+      add({
+        id: `ai-summary-${patient.id}`,
+        message: `AI Summary ready for ${patient.name}`,
+        title: 'AI Summary ready',
+      })
+      await showAppNotification(
+        'AI Summary ready',
+        `AI Summary ready for ${patient.name}`,
+      )
     } catch (streamError) {
       if (controller.signal.aborted) {
         setSummary((current) => current || 'Summary generation was stopped.')
