@@ -4,6 +4,11 @@ MediCore is a production-style B2B healthcare SaaS dashboard built for a fronten
 
 Live demo link: https://medicore-bice.vercel.app/login
 
+## Login Credentials :-
+Email = test@medicore.com
+Passoword = Test@1234
+## User can also Login via Gmail.
+
 ## Project overview
 
 - `Dashboard`: operational KPIs, recent activity feed, quick actions, and loading skeletons.
