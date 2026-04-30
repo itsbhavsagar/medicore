@@ -12,6 +12,22 @@ interface AIPatientSummaryProps {
   patient: Patient;
 }
 
+const formatSummaryText = (text: string) => {
+  const normalizedText = text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .trim();
+
+  return normalizedText
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => ({
+      isBullet: /^[-*]\s+/.test(line),
+      text: line.replace(/^[-*]\s+/, "").trim(),
+    }));
+};
+
 export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
   const { add } = useNotifications();
   const controllerRef = useRef<AbortController | null>(null);
@@ -82,10 +98,12 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
               AI patient summary
             </p>
           </div>
-          <p className="mt-2 text-sm leading-6 text-muted">
-            Generate a streamed summary covering condition assessment,
-            medication notes, and current risk flags.
-          </p>
+          {!summary && !isStreaming ? (
+            <p className="mt-2 text-sm leading-6 text-muted">
+              Generate a streamed summary covering condition assessment,
+              medication notes, and current risk flags.
+            </p>
+          ) : null}
         </div>
 
         <div className="flex items-center gap-3">
@@ -111,9 +129,26 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
 
       <div className="mt-5 rounded-xl border border-border bg-surface-elevated p-5">
         {summary ? (
-          <p className="whitespace-pre-wrap text-sm leading-7 text-foreground">
-            {summary}
-          </p>
+          <div className="space-y-2">
+            {formatSummaryText(summary).map((line, index) =>
+              line.isBullet ? (
+                <div
+                  className="flex items-start gap-2 text-sm leading-7 text-foreground"
+                  key={`${line.text}-${index}`}
+                >
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-subtle" />
+                  <span>{line.text}</span>
+                </div>
+              ) : (
+                <p
+                  className="text-sm leading-7 text-foreground"
+                  key={`${line.text}-${index}`}
+                >
+                  {line.text}
+                </p>
+              ),
+            )}
+          </div>
         ) : (
           <div className="space-y-3">
             <p className="text-sm font-medium text-foreground">
