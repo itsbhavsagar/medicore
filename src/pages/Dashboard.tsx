@@ -7,6 +7,7 @@ import {
   Plus,
   UsersRound,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { cn } from '../utils/cn'
@@ -151,7 +152,12 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <Card className="overflow-hidden bg-[linear-gradient(140deg,var(--app-primary-soft),transparent_40%),var(--app-surface)]">
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 12 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="overflow-hidden bg-[linear-gradient(140deg,var(--app-primary-soft),transparent_40%),var(--app-surface)]">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.24em] text-accent">
@@ -180,16 +186,29 @@ export function Dashboard() {
             ))}
           </div>
         </div>
-      </Card>
+        </Card>
+      </motion.div>
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {dashboardStats.map((stat) => (
-          <StatCard key={stat.id} stat={stat} />
+        {dashboardStats.map((stat, index) => (
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 16 }}
+            key={stat.id}
+            transition={{ delay: index * 0.06, duration: 0.28 }}
+          >
+            <StatCard stat={stat} />
+          </motion.div>
         ))}
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card>
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 14 }}
+          transition={{ delay: 0.18, duration: 0.28 }}
+        >
+          <Card>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-semibold text-foreground">Recent activity</p>
@@ -223,9 +242,15 @@ export function Dashboard() {
               </div>
             ))}
           </div>
-        </Card>
+          </Card>
+        </motion.div>
 
-        <Card>
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 14 }}
+          transition={{ delay: 0.24, duration: 0.28 }}
+        >
+          <Card>
           <div>
             <p className="text-lg font-semibold text-foreground">Team priorities</p>
             <p className="mt-1 text-sm text-muted">
@@ -262,7 +287,8 @@ export function Dashboard() {
               </p>
             </div>
           </div>
-        </Card>
+          </Card>
+        </motion.div>
       </section>
     </div>
   )

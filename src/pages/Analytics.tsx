@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
   Bar,
   BarChart,
@@ -47,7 +48,12 @@ export function Analytics() {
 
   return (
     <div className="space-y-6">
-      <Card className="overflow-hidden bg-[linear-gradient(145deg,var(--app-accent-soft),transparent_42%),var(--app-surface)]">
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 12 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="overflow-hidden bg-[linear-gradient(145deg,var(--app-accent-soft),transparent_42%),var(--app-surface)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <Badge tone="info">Analytics center</Badge>
@@ -73,10 +79,16 @@ export function Analytics() {
             ))}
           </div>
         </div>
-      </Card>
+        </Card>
+      </motion.div>
 
       <section className="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
-        <Card>
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 14 }}
+          transition={{ delay: 0.08, duration: 0.28 }}
+        >
+          <Card>
           <div className="mb-6">
             <p className="text-lg font-semibold text-foreground">
               Patient admission trends
@@ -118,9 +130,15 @@ export function Analytics() {
               />
             </LineChart>
           </ResponsiveContainer>
-        </Card>
+          </Card>
+        </motion.div>
 
-        <Card>
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 14 }}
+          transition={{ delay: 0.14, duration: 0.28 }}
+        >
+          <Card>
           <div className="mb-6">
             <p className="text-lg font-semibold text-foreground">
               Department distribution
@@ -157,11 +175,17 @@ export function Analytics() {
               <Legend />
             </PieChart>
           </ResponsiveContainer>
-        </Card>
+          </Card>
+        </motion.div>
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card>
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 14 }}
+          transition={{ delay: 0.2, duration: 0.28 }}
+        >
+          <Card>
           <div className="mb-6">
             <p className="text-lg font-semibold text-foreground">
               Recovery rate by department
@@ -197,9 +221,15 @@ export function Analytics() {
               />
             </BarChart>
           </ResponsiveContainer>
-        </Card>
+          </Card>
+        </motion.div>
 
-        <Card>
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 14 }}
+          transition={{ delay: 0.26, duration: 0.28 }}
+        >
+          <Card>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-lg font-semibold text-foreground">
@@ -245,7 +275,8 @@ export function Analytics() {
               </div>
             ))}
           </div>
-        </Card>
+          </Card>
+        </motion.div>
       </section>
     </div>
   )

@@ -1,4 +1,5 @@
 import { ActivitySquare, ShieldCheck } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { startTransition, type FormEvent, useMemo, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
@@ -82,7 +83,11 @@ export function Login() {
     <main className="medicore-shell flex min-h-screen items-center justify-center px-6 py-10">
       <div className="grid w-full max-w-6xl gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <section className="hidden rounded-[36px] border border-border bg-[linear-gradient(145deg,var(--app-primary-soft),transparent_40%),var(--app-surface)] p-10 shadow-[var(--app-shadow)] lg:flex lg:flex-col lg:justify-between">
-          <div>
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 16 }}
+            transition={{ duration: 0.32 }}
+          >
             <span className="inline-flex rounded-full bg-accent-soft px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-accent">
               MediCore
             </span>
@@ -94,9 +99,14 @@ export function Login() {
               Designed for care teams who need instant visibility into critical
               cases, admissions, recovery trends, and AI-assisted summaries.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            className="grid gap-4 md:grid-cols-2"
+            initial={{ opacity: 0, y: 16 }}
+            transition={{ delay: 0.08, duration: 0.32 }}
+          >
             <Card className="rounded-[28px] bg-surface-elevated p-5">
               <ActivitySquare className="h-5 w-5 text-accent" />
               <p className="mt-4 text-sm font-semibold text-foreground">
@@ -117,10 +127,16 @@ export function Login() {
                 assignment-ready sign-in flow.
               </p>
             </Card>
-          </div>
+          </motion.div>
         </section>
 
-        <Card className="mx-auto flex w-full max-w-xl flex-col justify-center rounded-[36px] p-8 md:p-10">
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-auto w-full max-w-xl"
+          initial={{ opacity: 0, y: 18 }}
+          transition={{ delay: 0.04, duration: 0.34 }}
+        >
+          <Card className="flex w-full flex-col justify-center rounded-[36px] p-8 md:p-10">
           <div className="mb-8">
             <span className="inline-flex rounded-full bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-primary">
               Secure Access
@@ -189,7 +205,8 @@ export function Login() {
               {isLoading ? 'Signing you in...' : 'Sign in'}
             </Button>
           </form>
-        </Card>
+          </Card>
+        </motion.div>
       </div>
     </main>
   )

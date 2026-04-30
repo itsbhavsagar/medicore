@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { AnimatePresence } from 'framer-motion'
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { Header } from './components/layout/Header'
 import { PageWrapper } from './components/layout/PageWrapper'
@@ -96,7 +97,17 @@ export function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
+      <AnimatedRoutes />
+    </BrowserRouter>
+  )
+}
+
+function AnimatedRoutes() {
+  const location = useLocation()
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes key={location.pathname} location={location}>
         <Route element={<Login />} path="/login" />
         <Route element={<ProtectedRoute />}>
           <Route element={<Dashboard />} path="/" />
@@ -104,6 +115,6 @@ export function App() {
           <Route element={<PatientDetails />} path="/patients" />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </AnimatePresence>
   )
 }
