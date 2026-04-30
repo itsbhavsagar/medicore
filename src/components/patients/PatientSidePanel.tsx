@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Activity,
   Phone,
@@ -6,23 +6,20 @@ import {
   Stethoscope,
   UserRoundX,
   X,
-} from 'lucide-react'
-import type { Patient } from '../../types'
-import { AIPatientSummary } from './AIPatientSummary'
-import { Avatar } from '../ui/Avatar'
-import { Badge } from '../ui/Badge'
-import { Button } from '../ui/Button'
-import { Card } from '../ui/Card'
+} from "lucide-react";
+import type { Patient } from "../../types";
+import { AIPatientSummary } from "./AIPatientSummary";
+import { Avatar } from "../ui/Avatar";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
 
 interface PatientSidePanelProps {
-  patient: Patient | null
-  onClose: () => void
+  patient: Patient | null;
+  onClose: () => void;
 }
 
-export function PatientSidePanel({
-  onClose,
-  patient,
-}: PatientSidePanelProps) {
+export function PatientSidePanel({ onClose, patient }: PatientSidePanelProps) {
   return (
     <AnimatePresence>
       {patient ? (
@@ -37,20 +34,24 @@ export function PatientSidePanel({
           />
           <motion.aside
             animate={{ opacity: 1, x: 0 }}
-            className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl overflow-y-auto border-l border-border bg-background p-5 shadow-[var(--app-shadow)]"
+            className="fixed inset-y-0 right-0 z-50 w-full max-w-2xl overflow-y-auto border-l border-border bg-background p-5 shadow-(--app-shadow)"
             initial={{ opacity: 0, x: 32 }}
             transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
           >
             <Card className="min-h-full bg-surface-elevated p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-center gap-4">
-                  <Avatar className="h-14 w-14 text-base" name={patient.name} status={patient.status} />
+                  <Avatar
+                    className="h-14 w-14 text-base"
+                    name={patient.name}
+                    status={patient.status}
+                  />
                   <div>
                     <p className="text-[28px] font-medium tracking-[-0.03em] text-foreground">
                       {patient.name}
                     </p>
                     <p className="mt-2 text-sm text-muted">
-                      {patient.age} years old • {patient.gender} • Blood type{' '}
+                      {patient.age} years old • {patient.gender} • Blood type{" "}
                       {patient.bloodType}
                     </p>
                   </div>
@@ -89,7 +90,7 @@ export function PatientSidePanel({
                     </p>
                   </div>
                   <p className="mt-4 text-sm leading-6 text-muted">
-                    {patient.emergencyContact.name} •{' '}
+                    {patient.emergencyContact.name} •{" "}
                     {patient.emergencyContact.relationship}
                   </p>
                   <p className="mt-2 flex items-center gap-2 text-sm text-muted">
@@ -103,37 +104,31 @@ export function PatientSidePanel({
                 <Card className="bg-surface p-5">
                   <div className="flex items-center gap-3">
                     <Activity className="h-5 w-5 text-primary" />
-                    <p className="text-sm font-medium text-foreground">Vitals</p>
+                    <p className="text-sm font-medium text-foreground">
+                      Vitals
+                    </p>
                   </div>
                   <div className="mt-6 grid gap-x-6 gap-y-5 sm:grid-cols-2 xl:grid-cols-4">
                     <div>
-                      <p className="text-xs text-subtle">
-                        Heart rate
-                      </p>
+                      <p className="text-xs text-subtle">Heart rate</p>
                       <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.heartRate} bpm
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-subtle">
-                        Blood pressure
-                      </p>
+                      <p className="text-xs text-subtle">Blood pressure</p>
                       <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.bloodPressure}
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-subtle">
-                        Temperature
-                      </p>
+                      <p className="text-xs text-subtle">Temperature</p>
                       <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.temperature}°C
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs text-subtle">
-                        O2 saturation
-                      </p>
+                      <p className="text-xs text-subtle">O2 saturation</p>
                       <p className="mt-2 text-lg font-medium text-foreground">
                         {patient.vitals.oxygenSaturation}%
                       </p>
@@ -164,5 +159,5 @@ export function PatientSidePanel({
         </>
       ) : null}
     </AnimatePresence>
-  )
+  );
 }

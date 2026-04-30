@@ -1,9 +1,11 @@
 import { initializeApp, type FirebaseOptions } from 'firebase/app'
 import {
   browserLocalPersistence,
+  GoogleAuthProvider,
   getAuth,
   onAuthStateChanged,
   setPersistence,
+  signInWithPopup,
   signInWithEmailAndPassword,
   signOut,
   type User,
@@ -32,6 +34,7 @@ export const isFirebaseConfigured = REQUIRED_CONFIG_FIELDS.every((field) =>
 const firebaseApp = isFirebaseConfigured ? initializeApp(firebaseConfig) : null
 
 export const firebaseAuth = firebaseApp ? getAuth(firebaseApp) : null
+const googleProvider = new GoogleAuthProvider()
 
 export const firebaseUnavailableMessage =
   'Firebase authentication is not configured. Add your Vite Firebase environment variables to enable sign-in.'
@@ -73,6 +76,17 @@ export const loginWithEmailPassword = async (email: string, password: string) =>
 
   await setPersistence(firebaseAuth, browserLocalPersistence)
   const credentials = await signInWithEmailAndPassword(firebaseAuth, email, password)
+
+  return mapFirebaseUser(credentials.user)
+}
+
+export const loginWithGoogle = async () => {
+  if (!firebaseAuth) {
+    throw new Error(firebaseUnavailableMessage)
+  }
+
+  await setPersistence(firebaseAuth, browserLocalPersistence)
+  const credentials = await signInWithPopup(firebaseAuth, googleProvider)
 
   return mapFirebaseUser(credentials.user)
 }

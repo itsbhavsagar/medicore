@@ -8,6 +8,7 @@ export const useAuth = () => {
   const error = useAuthStore((state) => state.error)
   const isInitialized = useAuthStore((state) => state.isInitialized)
   const login = useAuthStore((state) => state.login)
+  const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle)
   const logout = useAuthStore((state) => state.logout)
   const clearError = useAuthStore((state) => state.clearError)
 
@@ -19,6 +20,7 @@ export const useAuth = () => {
     error,
     isInitialized,
     login,
+    loginWithGoogle,
     logout,
     clearError,
   }

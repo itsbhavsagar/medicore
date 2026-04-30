@@ -14,6 +14,7 @@ import { showAppNotification } from './services/notifications'
 import { useThemeStore } from './store/themeStore'
 
 const CRITICAL_PATIENT_ALERT_COUNT = 3
+let lastWelcomedUserId: string | null = null
 
 const routeMetadata: Record<string, { title: string; subtitle: string }> = {
   '/': {
@@ -38,11 +39,16 @@ function AppLayout() {
   const metadata = routeMetadata[location.pathname] ?? routeMetadata['/']
 
   useEffect(() => {
-    if (!user || welcomeNotificationUserId.current === user.uid) {
+    if (
+      !user ||
+      welcomeNotificationUserId.current === user.uid ||
+      lastWelcomedUserId === user.uid
+    ) {
       return
     }
 
     welcomeNotificationUserId.current = user.uid
+    lastWelcomedUserId = user.uid
     const body = `Welcome back, ${user.name}. You have ${CRITICAL_PATIENT_ALERT_COUNT} critical patients today.`
 
     add({

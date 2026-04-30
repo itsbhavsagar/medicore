@@ -1,130 +1,148 @@
-import { AnimatePresence, motion } from 'framer-motion'
-import { X } from 'lucide-react'
-import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import type {
   BloodType,
   Department,
   Gender,
   NewPatientInput,
   PatientStatus,
-} from '../../types'
-import { Button } from '../ui/Button'
-import { Card } from '../ui/Card'
+} from "../../types";
+import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
 
 interface AddPatientModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (patient: NewPatientInput) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: (patient: NewPatientInput) => void;
 }
 
-const genderOptions: Gender[] = ['Female', 'Male', 'Non-binary']
-const bloodTypeOptions: BloodType[] = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+const genderOptions: Gender[] = ["Male", "Female", "Non-binary"];
+const bloodTypeOptions: BloodType[] = [
+  "A+",
+  "A-",
+  "B+",
+  "B-",
+  "AB+",
+  "AB-",
+  "O+",
+  "O-",
+];
 const departmentOptions: Department[] = [
-  'Cardiology',
-  'Neurology',
-  'Oncology',
-  'Orthopedics',
-  'Pulmonology',
-  'Emergency',
-  'Pediatrics',
-]
+  "Cardiology",
+  "Neurology",
+  "Oncology",
+  "Orthopedics",
+  "Pulmonology",
+  "Emergency",
+  "Pediatrics",
+];
 const statusOptions: PatientStatus[] = [
-  'Critical',
-  'Stable',
-  'Recovering',
-  'Discharged',
-]
+  "Critical",
+  "Stable",
+  "Recovering",
+  "Discharged",
+];
 
 const initialState: NewPatientInput = {
-  name: '',
+  name: "",
   age: 0,
-  gender: 'Female',
-  bloodType: 'A+',
-  diagnosis: '',
-  status: 'Stable',
-  roomNumber: '',
-  doctor: '',
-  department: 'Cardiology',
+  gender: "Female",
+  bloodType: "A+",
+  diagnosis: "",
+  status: "Stable",
+  roomNumber: "",
+  doctor: "",
+  department: "Cardiology",
   medications: [],
-  emergencyContactName: '',
-  emergencyContactRelationship: '',
-  emergencyContactPhone: '',
-}
+  emergencyContactName: "",
+  emergencyContactRelationship: "",
+  emergencyContactPhone: "",
+};
 
 export function AddPatientModal({
   isOpen,
   onClose,
   onSubmit,
 }: AddPatientModalProps) {
-  const [formState, setFormState] = useState<NewPatientInput>(initialState)
-  const [medicationInput, setMedicationInput] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [formState, setFormState] = useState<NewPatientInput>(initialState);
+  const [medicationInput, setMedicationInput] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const requiredFieldsFilled = useMemo(
     () =>
       Boolean(
         formState.name.trim() &&
-          formState.age > 0 &&
-          formState.diagnosis.trim() &&
-          formState.roomNumber.trim() &&
-          formState.doctor.trim() &&
-          formState.emergencyContactName.trim() &&
-          formState.emergencyContactRelationship.trim() &&
-          formState.emergencyContactPhone.trim(),
+        formState.age > 0 &&
+        formState.diagnosis.trim() &&
+        formState.roomNumber.trim() &&
+        formState.doctor.trim() &&
+        formState.emergencyContactName.trim() &&
+        formState.emergencyContactRelationship.trim() &&
+        formState.emergencyContactPhone.trim(),
       ),
     [formState],
-  )
+  );
 
   useEffect(() => {
     if (!isOpen) {
-      return
+      return;
     }
 
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.overflow = previousOverflow
-    }
-  }, [isOpen])
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
 
   const updateField = <Key extends keyof NewPatientInput>(
     field: Key,
     value: NewPatientInput[Key],
   ) => {
-    setFormState((current) => ({ ...current, [field]: value }))
-  }
+    setFormState((current) => ({ ...current, [field]: value }));
+  };
 
   const handleAddMedication = () => {
     if (!medicationInput.trim()) {
-      return
+      return;
     }
 
-    updateField('medications', [
+    updateField("medications", [
       ...formState.medications,
       medicationInput.trim(),
-    ])
-    setMedicationInput('')
-  }
+    ]);
+    setMedicationInput("");
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (!requiredFieldsFilled) {
-      setError('Complete the required fields before saving the patient.')
+      setError("Complete the required fields before saving the patient.");
 
-      return
+      return;
     }
 
     onSubmit({
       ...formState,
-      medications: formState.medications.length > 0 ? formState.medications : ['Observation pending'],
-    })
-    setFormState(initialState)
-    setMedicationInput('')
-    setError(null)
-    onClose()
-  }
+      medications:
+        formState.medications.length > 0
+          ? formState.medications
+          : ["Observation pending"],
+    });
+    setFormState(initialState);
+    setMedicationInput("");
+    setError(null);
+    onClose();
+  };
 
   return (
     <AnimatePresence>
@@ -139,31 +157,41 @@ export function AddPatientModal({
           />
           <motion.div
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="fixed inset-x-4 top-4 z-50 mx-auto w-full max-w-2xl"
+            className="fixed inset-x-3 top-3 z-50 mx-auto w-auto max-w-2xl sm:inset-x-4 sm:top-4 sm:w-full"
             initial={{ opacity: 0, scale: 0.98, y: 12 }}
             transition={{ duration: 0.22 }}
           >
-            <Card className="max-h-[calc(100vh-2rem)] overflow-y-auto p-5">
+            <Card className="max-h-[calc(100vh-1.5rem)] overflow-y-auto p-3 sm:max-h-[calc(100vh-2rem)] sm:p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[22px] font-medium tracking-[-0.03em] text-foreground">
+                  <p className="text-lg font-medium tracking-[-0.03em] text-foreground sm:text-[22px]">
                     Add patient
                   </p>
-                  <p className="mt-1 text-sm text-muted">
+                  <p className="mt-1 text-xs text-muted sm:text-sm">
                     Create a new patient record for the current care roster.
                   </p>
                 </div>
-                <Button className="cursor-pointer" onClick={onClose} size="sm" variant="ghost">
+                <Button
+                  className="cursor-pointer"
+                  onClick={onClose}
+                  size="sm"
+                  variant="ghost"
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
 
-              <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
-                <div className="grid gap-3 md:grid-cols-2">
+              <form
+                className="mt-4 space-y-3 sm:mt-5 sm:space-y-4"
+                onSubmit={handleSubmit}
+              >
+                <div className="grid gap-3 sm:grid-cols-2">
                   <Field label="Full name" required>
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('name', event.target.value)}
+                      onChange={(event) =>
+                        updateField("name", event.target.value)
+                      }
                       value={formState.name}
                     />
                   </Field>
@@ -171,36 +199,49 @@ export function AddPatientModal({
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       min="0"
-                      onChange={(event) => updateField('age', Number(event.target.value))}
+                      onChange={(event) =>
+                        updateField("age", Number(event.target.value))
+                      }
                       type="number"
-                      value={formState.age || ''}
+                      value={formState.age || ""}
                     />
                   </Field>
                   <Field label="Diagnosis" required>
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('diagnosis', event.target.value)}
+                      onChange={(event) =>
+                        updateField("diagnosis", event.target.value)
+                      }
                       value={formState.diagnosis}
                     />
                   </Field>
                   <Field label="Room number" required>
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('roomNumber', event.target.value)}
+                      onChange={(event) =>
+                        updateField("roomNumber", event.target.value)
+                      }
                       value={formState.roomNumber}
                     />
                   </Field>
                   <Field label="Doctor" required>
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('doctor', event.target.value)}
+                      onChange={(event) =>
+                        updateField("doctor", event.target.value)
+                      }
                       value={formState.doctor}
                     />
                   </Field>
                   <Field label="Status">
                     <select
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('status', event.target.value as PatientStatus)}
+                      onChange={(event) =>
+                        updateField(
+                          "status",
+                          event.target.value as PatientStatus,
+                        )
+                      }
                       value={formState.status}
                     >
                       {statusOptions.map((option) => (
@@ -213,7 +254,12 @@ export function AddPatientModal({
                   <Field label="Department">
                     <select
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('department', event.target.value as Department)}
+                      onChange={(event) =>
+                        updateField(
+                          "department",
+                          event.target.value as Department,
+                        )
+                      }
                       value={formState.department}
                     >
                       {departmentOptions.map((option) => (
@@ -226,7 +272,9 @@ export function AddPatientModal({
                   <Field label="Gender">
                     <select
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('gender', event.target.value as Gender)}
+                      onChange={(event) =>
+                        updateField("gender", event.target.value as Gender)
+                      }
                       value={formState.gender}
                     >
                       {genderOptions.map((option) => (
@@ -239,7 +287,12 @@ export function AddPatientModal({
                   <Field label="Blood type">
                     <select
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('bloodType', event.target.value as BloodType)}
+                      onChange={(event) =>
+                        updateField(
+                          "bloodType",
+                          event.target.value as BloodType,
+                        )
+                      }
                       value={formState.bloodType}
                     >
                       {bloodTypeOptions.map((option) => (
@@ -252,7 +305,9 @@ export function AddPatientModal({
                   <Field label="Emergency contact" required>
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('emergencyContactName', event.target.value)}
+                      onChange={(event) =>
+                        updateField("emergencyContactName", event.target.value)
+                      }
                       value={formState.emergencyContactName}
                     />
                   </Field>
@@ -260,7 +315,10 @@ export function AddPatientModal({
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) =>
-                        updateField('emergencyContactRelationship', event.target.value)
+                        updateField(
+                          "emergencyContactRelationship",
+                          event.target.value,
+                        )
                       }
                       value={formState.emergencyContactRelationship}
                     />
@@ -268,7 +326,9 @@ export function AddPatientModal({
                   <Field label="Contact phone" required>
                     <input
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => updateField('emergencyContactPhone', event.target.value)}
+                      onChange={(event) =>
+                        updateField("emergencyContactPhone", event.target.value)
+                      }
                       value={formState.emergencyContactPhone}
                     />
                   </Field>
@@ -278,10 +338,12 @@ export function AddPatientModal({
                   <label className="text-sm font-medium text-foreground">
                     Medications
                   </label>
-                  <div className="flex gap-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
                     <input
-                      className="h-10 flex-1 rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
-                      onChange={(event) => setMedicationInput(event.target.value)}
+                      className="h-10 flex-1 rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none py-2"
+                      onChange={(event) =>
+                        setMedicationInput(event.target.value)
+                      }
                       placeholder="Add medication"
                       value={medicationInput}
                     />
@@ -310,11 +372,18 @@ export function AddPatientModal({
 
                 {error ? <p className="text-sm text-muted">{error}</p> : null}
 
-                <div className="flex justify-end gap-3 pt-1">
-                  <Button className="cursor-pointer" onClick={onClose} variant="secondary">
+                <div className="flex flex-col-reverse gap-2 pt-1 sm:flex-row sm:justify-end sm:gap-3">
+                  <Button
+                    className="w-full cursor-pointer sm:w-auto"
+                    onClick={onClose}
+                    variant="secondary"
+                  >
                     Cancel
                   </Button>
-                  <Button className="cursor-pointer" type="submit">
+                  <Button
+                    className="w-full cursor-pointer sm:w-auto"
+                    type="submit"
+                  >
                     Save patient
                   </Button>
                 </div>
@@ -324,7 +393,7 @@ export function AddPatientModal({
         </>
       ) : null}
     </AnimatePresence>
-  )
+  );
 }
 
 function Field({
@@ -332,17 +401,17 @@ function Field({
   label,
   required = false,
 }: {
-  children: ReactNode
-  label: string
-  required?: boolean
+  children: ReactNode;
+  label: string;
+  required?: boolean;
 }) {
   return (
-    <label className="space-y-2">
-      <span className="text-sm font-medium text-foreground">
+    <label className="space-y-1.5 sm:space-y-2">
+      <span className="text-xs font-medium text-foreground sm:text-sm">
         {label}
-        {required ? ' *' : ''}
+        {required ? " *" : ""}
       </span>
       {children}
     </label>
-  )
+  );
 }

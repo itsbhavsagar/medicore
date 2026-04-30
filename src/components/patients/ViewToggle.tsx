@@ -14,14 +14,14 @@ const options: Array<{ label: string; value: ViewMode; icon: typeof LayoutGrid }
 
 export function ViewToggle({ onChange, value }: ViewToggleProps) {
   return (
-    <div className="inline-flex rounded-2xl border border-border bg-surface p-1">
+    <div className="inline-flex w-full rounded-xl border border-border bg-surface p-1 sm:w-auto">
       {options.map(({ icon: Icon, label, value: optionValue }) => {
         const active = optionValue === value
 
         return (
           <button
             className={cn(
-              'inline-flex h-10 cursor-pointer items-center gap-2 rounded-xl px-4 text-sm font-medium transition duration-200',
+              'inline-flex h-10 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium transition duration-200 sm:flex-none sm:px-4',
               active
                 ? 'bg-primary text-white'
                 : 'text-muted hover:text-foreground',

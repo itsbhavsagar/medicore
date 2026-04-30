@@ -75,21 +75,21 @@ export function PatientDetails() {
   return (
     <div className="space-y-6">
       <Card>
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="flex items-center gap-2 text-sm font-medium text-muted">
-              <span className="h-2 w-2 rounded-full bg-accent" />
-              patients
+        <div className="flex flex-col gap-3 sm:gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0 flex-1">
+            <p className="flex items-center gap-2 text-xs sm:text-sm font-medium text-muted">
+              <span className="h-2 w-2 rounded-full bg-accent flex-shrink-0" />
+              <span>patients</span>
             </p>
-            <h2 className="mt-3 text-[28px] font-medium tracking-[-0.03em] text-foreground">
+            <h2 className="mt-2 sm:mt-3 text-lg sm:text-2xl md:text-[28px] font-medium tracking-[-0.03em] text-foreground line-clamp-2 sm:line-clamp-none">
               Search and review active patient records
             </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted">
+            <p className="mt-1 sm:mt-2 max-w-2xl text-xs sm:text-sm leading-5 sm:leading-6 text-muted line-clamp-3 sm:line-clamp-none">
               Switch between a quick-scan grid and a denser list view while
               keeping the current patient selection in shared state.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3 flex-shrink-0">
             <ViewToggle
               onChange={(value) => {
                 setView(value);
@@ -97,55 +97,61 @@ export function PatientDetails() {
               }}
               value={viewMode}
             />
-            <Button className="cursor-pointer" onClick={openAddPatient}>
+            <Button
+              className="min-h-9 w-full cursor-pointer text-xs sm:min-h-10 sm:w-auto sm:text-sm"
+              onClick={openAddPatient}
+            >
               Add patient
             </Button>
           </div>
         </div>
       </Card>
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex w-full flex-col gap-3 lg:max-w-3xl lg:flex-row lg:items-center">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" />
+      <div className="flex flex-col gap-3 md:gap-4">
+        <div className="flex w-full flex-col gap-3 md:max-w-3xl md:flex-row md:items-center">
+          <div className="relative flex-1 min-w-0">
+            <Search className="pointer-events-none absolute left-3 sm:left-4 top-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 -translate-y-1/2 text-subtle flex-shrink-0" />
             <input
-              className="h-12 w-full rounded-xl border border-border bg-surface px-12 text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
+              className="h-9 sm:h-12 w-full rounded-xl border border-border bg-surface px-9 sm:px-12 text-xs sm:text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
               onChange={(event) => {
                 setLocalSearch(event.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="Search by patient, diagnosis, doctor, department, or room"
+              placeholder="Search patient, diagnosis, doctor..."
               type="search"
               value={localSearch}
             />
           </div>
+          <div className="flex flex-col gap-1 text-xs sm:text-sm text-muted">
+            <span>Rows per page</span>
+            <select
+              className="h-9 w-24 cursor-pointer rounded-xl border border-border bg-surface px-3 text-xs sm:text-sm text-foreground outline-none"
+              onChange={(event) => {
+                setPageSize(
+                  Number(event.target.value) as (typeof pageSizeOptions)[number],
+                );
+                setCurrentPage(1);
+              }}
+              value={pageSize}
+            >
+              {pageSizeOptions.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted">
-          <span>Rows per page</span>
-          <select
-            className="h-9 cursor-pointer rounded-xl border border-border bg-surface px-3 text-sm text-foreground outline-none"
-            onChange={(event) => {
-              setPageSize(
-                Number(event.target.value) as (typeof pageSizeOptions)[number],
-              );
-              setCurrentPage(1);
-            }}
-            value={pageSize}
-          >
-            {pageSizeOptions.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        </div>
+        <p className="text-xs text-muted sm:text-sm">
+          Showing {paginatedPatients.length} of {filteredPatients.length} patients
+        </p>
       </div>
-
+      
       <AnimatePresence mode="wait">
         {viewMode === "grid" ? (
           <motion.section
             animate={{ opacity: 1, y: 0 }}
-            className="grid gap-5 md:grid-cols-2 xl:grid-cols-3"
+            className="grid gap-3 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
             initial={{ opacity: 0, y: 8 }}
             key="grid-view"
             layout
@@ -165,12 +171,12 @@ export function PatientDetails() {
             key="list-view"
             transition={{ duration: 0.22 }}
           >
-            <div className="hidden grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] gap-4 px-5 text-xs font-medium text-subtle xl:grid">
+            <div className="hidden grid-cols-[1.5fr_0.8fr_1.2fr_0.8fr_0.9fr] gap-4 px-3 text-xs font-medium text-subtle sm:grid sm:px-5">
               <span>Patient</span>
-              <span>Diagnosis</span>
+              <span className="hidden sm:inline">Diagnosis</span>
               <span>Status</span>
-              <span>Room</span>
-              <span>Last visit</span>
+              <span className="hidden sm:inline">Room</span>
+              <span className="hidden sm:inline">Last visit</span>
             </div>
 
             {paginatedPatients.map((patient) => (
@@ -181,23 +187,23 @@ export function PatientDetails() {
           </motion.section>
         )}
       </AnimatePresence>
-      <div className="flex justify-center rounded-xl border border-border bg-surface p-4">
-        <div className="flex flex-wrap items-center justify-center gap-2">
+      <div className="flex justify-center rounded-xl border border-border bg-surface p-2 sm:p-4">
+        <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
           <Button
-            className="cursor-pointer"
+            className="cursor-pointer min-h-8 sm:min-h-9 px-2 sm:px-3 text-xs sm:text-sm"
             disabled={safeCurrentPage === 1}
             onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
             size="sm"
             variant="secondary"
           >
-            Previous
+            Prev
           </Button>
           {visiblePages.map((page) => (
             <button
               className={
                 page === safeCurrentPage
-                  ? "h-9 min-w-9 cursor-pointer rounded-xl bg-primary text-sm font-medium text-white"
-                  : "h-9 min-w-9 cursor-pointer rounded-xl border border-border bg-surface text-sm font-medium text-foreground"
+                  ? "h-8 sm:h-9 min-w-8 sm:min-w-9 cursor-pointer rounded-xl bg-primary text-xs sm:text-sm font-medium text-white"
+                  : "h-8 sm:h-9 min-w-8 sm:min-w-9 cursor-pointer rounded-xl border border-border bg-surface text-xs sm:text-sm font-medium text-foreground"
               }
               key={page}
               onClick={() => setCurrentPage(page)}

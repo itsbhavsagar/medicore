@@ -20,7 +20,7 @@ export const useNotificationStore = create<NotificationStoreState>((set) => ({
           createdAt: new Date().toISOString(),
           read: false,
         },
-        ...state.notifications,
+        ...state.notifications.filter((notification) => notification.id !== id),
       ],
     })),
   dismiss: (notificationId) =>
