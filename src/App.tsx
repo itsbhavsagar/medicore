@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation } from 'rea
 import { Header } from './components/layout/Header'
 import { PageWrapper } from './components/layout/PageWrapper'
 import { Sidebar } from './components/layout/Sidebar'
+import { ToastViewport } from './components/ui/ToastViewport'
 import { useAuth } from './hooks/useAuth'
 import { useNotifications } from './hooks/useNotifications'
 import { Analytics } from './pages/Analytics'
@@ -104,6 +105,7 @@ export function App() {
   return (
     <BrowserRouter>
       <AnimatedRoutes />
+      <ToastViewport />
     </BrowserRouter>
   )
 }

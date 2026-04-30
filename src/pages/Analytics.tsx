@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Bar,
@@ -15,8 +15,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { admissionTrend, mockPatients } from "../data/mockPatients";
 import { Card } from "../components/ui/Card";
+import { Skeleton } from "../components/ui/Skeleton";
+import { fetchAnalyticsData } from "../services/analytics";
 import type { Department, PatientStatus } from "../types";
 
 const CHART_HEIGHT = 320;
@@ -46,7 +47,57 @@ const statusRecoveryWeights: Record<PatientStatus, number> = {
   Discharged: 1,
 };
 
+function AnalyticsSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0 flex-1">
+          <Skeleton className="h-8 w-40 max-w-full" />
+          <Skeleton className="mt-2 h-4 w-64 max-w-full" />
+        </div>
+        <Skeleton className="h-11 w-72 max-w-full rounded-full" />
+      </div>
+
+      <section className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-[1.15fr_0.85fr]">
+        <Card>
+          <Skeleton className="mb-4 h-4 w-40" />
+          <Skeleton className="h-[320px] w-full rounded-xl" />
+        </Card>
+        <Card>
+          <Skeleton className="mb-4 h-4 w-40" />
+          <Skeleton className="h-[320px] w-full rounded-xl" />
+        </Card>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        <Card>
+          <Skeleton className="mb-4 h-4 w-44" />
+          <Skeleton className="h-[320px] w-full rounded-xl" />
+        </Card>
+        <Card>
+          <div className="space-y-4">
+            <Skeleton className="h-4 w-52" />
+            {Array.from({ length: 4 }).map((_, index) => (
+              <Skeleton
+                className="h-24 w-full rounded-xl"
+                key={`analytics-snapshot-skeleton-${index}`}
+              />
+            ))}
+          </div>
+        </Card>
+      </section>
+    </div>
+  );
+}
+
 export function Analytics() {
+  const [analyticsPatients, setAnalyticsPatients] = useState<
+    Awaited<ReturnType<typeof fetchAnalyticsData>>["patients"]
+  >([]);
+  const [trendData, setTrendData] = useState<
+    Awaited<ReturnType<typeof fetchAnalyticsData>>["trend"]
+  >([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [dateRange, setDateRange] = useState<
     (typeof dateRangeOptions)[number]["value"]
   >(() => {
@@ -63,8 +114,37 @@ export function Analytics() {
   });
   const [snapshotPage, setSnapshotPage] = useState(1);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadAnalytics = async () => {
+      setIsLoading(true);
+
+      try {
+        const response = await fetchAnalyticsData();
+
+        if (!isMounted) {
+          return;
+        }
+
+        setAnalyticsPatients(response.patients ?? []);
+        setTrendData(response.trend ?? []);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadAnalytics();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const departmentMetrics = useMemo(() => {
-    const groupedMetrics = mockPatients.reduce<
+    const groupedMetrics = analyticsPatients.reduce<
       Record<
         Department,
         {
@@ -104,19 +184,19 @@ export function Analytics() {
         recoveryRate: Math.round((entry.recoveryWeight / entry.patients) * 100),
       }))
       .sort((left, right) => right.patients - left.patients);
-  }, []);
+  }, [analyticsPatients]);
 
   const lineData = useMemo(() => {
     if (dateRange === 7) {
-      return admissionTrend.slice(-7);
+      return trendData.slice(-7);
     }
 
     if (dateRange === 30) {
-      return admissionTrend.slice(-10);
+      return trendData.slice(-10);
     }
 
-    return admissionTrend;
-  }, [dateRange]);
+    return trendData;
+  }, [dateRange, trendData]);
 
   const totalSnapshotPages = Math.max(
     1,
@@ -132,6 +212,10 @@ export function Analytics() {
   const visibleSnapshotPages = useMemo(() => {
     return Array.from({ length: totalSnapshotPages }, (_, index) => index + 1);
   }, [totalSnapshotPages]);
+
+  if (isLoading) {
+    return <AnalyticsSkeleton />;
+  }
 
   return (
     <div className="space-y-4">

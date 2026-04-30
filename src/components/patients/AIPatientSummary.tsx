@@ -1,6 +1,7 @@
 import { Bot, Sparkles, Square } from "lucide-react";
 import { useRef, useState } from "react";
 import { useNotifications } from "../../hooks/useNotifications";
+import { useToasts } from "../../hooks/useToasts";
 import { showAppNotification } from "../../services/notifications";
 import type { Patient } from "../../types";
 import { streamAiPatientSummary } from "../../services/ai";
@@ -30,6 +31,7 @@ const formatSummaryText = (text: string) => {
 
 export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
   const { add } = useNotifications();
+  const { show } = useToasts();
   const controllerRef = useRef<AbortController | null>(null);
   const [summary, setSummary] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -63,6 +65,12 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
         message: `AI Summary ready for ${patient.name}`,
         title: "AI Summary ready",
       });
+      show({
+        id: `toast-ai-summary-${patient.id}`,
+        message: `${patient.name}'s AI summary is ready to review.`,
+        title: "AI summary generated",
+        tone: "success",
+      });
 
       await showAppNotification(
         "AI Summary ready",
@@ -72,6 +80,15 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
       if (controller.signal.aborted) {
         setSummary((current) => current || "Summary generation was stopped.");
       } else {
+        show({
+          id: `toast-ai-summary-error-${patient.id}`,
+          message:
+            streamError instanceof Error
+              ? streamError.message
+              : "Unable to generate the AI summary right now.",
+          title: "Summary generation failed",
+          tone: "error",
+        });
         setError(
           streamError instanceof Error
             ? streamError.message

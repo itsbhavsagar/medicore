@@ -4,6 +4,8 @@ import { Navigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../hooks/useAuth";
+import { useToasts } from "../hooks/useToasts";
+import { mapFirebaseAuthError } from "../utils/mapFirebaseAuthError";
 
 interface FormState {
   email: string;
@@ -66,13 +68,13 @@ function EKGLine() {
 export function Login() {
   const {
     clearError,
-    error,
     isInitialized,
     isLoading,
     login,
     loginWithGoogle,
     user,
   } = useAuth();
+  const { show } = useToasts();
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [fieldErrors, setFieldErrors] = useState<Partial<FormState>>({});
   const [googleHovered, setGoogleHovered] = useState(false);
@@ -127,7 +129,19 @@ export function Login() {
 
     try {
       await login(formState.email, formState.password);
-    } catch {
+      show({
+        id: "toast-login-success",
+        message: "Your workspace is ready.",
+        title: "Welcome back",
+        tone: "success",
+      });
+    } catch (authError) {
+      show({
+        id: "toast-login-error",
+        message: mapFirebaseAuthError(authError),
+        title: "Sign-in failed",
+        tone: "error",
+      });
       setFieldErrors((current) => ({ ...current }));
     }
   };
@@ -135,7 +149,26 @@ export function Login() {
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
-    } catch {
+      show({
+        id: "toast-google-login-success",
+        message: "Signed in with Google successfully.",
+        title: "Welcome back",
+        tone: "success",
+      });
+    } catch (authError) {
+      const message = mapFirebaseAuthError(authError);
+      const isCancelled =
+        typeof authError === "object" &&
+        authError !== null &&
+        "code" in authError &&
+        authError.code === "auth/popup-closed-by-user";
+
+      show({
+        id: "toast-google-login-error",
+        message,
+        title: isCancelled ? "Sign-in cancelled" : "Sign-in failed",
+        tone: isCancelled ? "info" : "error",
+      });
       setFieldErrors((current) => ({ ...current }));
     }
   };
@@ -296,25 +329,6 @@ export function Login() {
                   )}
                 </AnimatePresence>
               </div>
-
-              <AnimatePresence>
-                {error && (
-                  <motion.div
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    initial={{ opacity: 0, y: -4 }}
-                    className="rounded-xl px-4 py-3 text-sm"
-                    style={{
-                      background: "var(--app-primary-soft)",
-                      border:
-                        "1px solid color-mix(in srgb, var(--app-primary) 25%, transparent)",
-                      color: "var(--app-primary)",
-                    }}
-                  >
-                    {error}
-                  </motion.div>
-                )}
-              </AnimatePresence>
 
               <Button
                 className="w-full"

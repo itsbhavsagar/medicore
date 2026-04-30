@@ -9,11 +9,70 @@ import { PatientSidePanel } from "../components/patients/PatientSidePanel";
 import { ViewToggle } from "../components/patients/ViewToggle";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { Skeleton } from "../components/ui/Skeleton";
 import { useNotifications } from "../hooks/useNotifications";
 import { usePatients } from "../hooks/usePatients";
+import { useToasts } from "../hooks/useToasts";
+import { fetchPatientsData } from "../services/patients";
 
 const SEARCH_DEBOUNCE_MS = 250;
 const pageSizeOptions = [5, 10, 25, 100] as const;
+
+function PatientDetailsSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Card>
+        <div className="flex flex-col gap-3 sm:gap-5 md:flex-row md:items-center md:justify-between">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-2 w-2 rounded-full" />
+              <Skeleton className="h-4 w-20" />
+            </div>
+            <Skeleton className="mt-3 h-9 w-full max-w-2xl" />
+            <Skeleton className="mt-2 h-4 w-full max-w-xl" />
+            <Skeleton className="mt-2 h-4 w-[78%] max-w-lg" />
+          </div>
+          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+            <Skeleton className="h-10 w-full rounded-xl sm:w-40" />
+            <Skeleton className="h-10 w-full rounded-xl sm:w-32" />
+          </div>
+        </div>
+      </Card>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <Skeleton className="h-10 flex-1 rounded-xl" />
+        <Skeleton className="hidden h-10 w-32 rounded-xl sm:block" />
+      </div>
+
+      <section className="grid gap-3 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <Card className="space-y-4 p-4 sm:p-5" key={`patient-skeleton-${index}`}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-3 w-20" />
+                </div>
+              </div>
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-3 w-16" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-[72%]" />
+            </div>
+            <div className="space-y-3">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-[82%]" />
+            </div>
+          </Card>
+        ))}
+      </section>
+    </div>
+  );
+}
 
 export function PatientDetails() {
   const {
@@ -27,7 +86,9 @@ export function PatientDetails() {
     viewMode,
   } = usePatients();
   const { add: addNotification } = useNotifications();
+  const { show } = useToasts();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<(typeof pageSizeOptions)[number]>(5);
   const [localSearch, setLocalSearch] = useState(searchQuery);
@@ -40,6 +101,28 @@ export function PatientDetails() {
 
     return filteredPatients.slice(startIndex, startIndex + pageSize);
   }, [filteredPatients, pageSize, safeCurrentPage]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPatients = async () => {
+      setIsLoading(true);
+
+      try {
+        await fetchPatientsData();
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    void loadPatients();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(
@@ -71,6 +154,10 @@ export function PatientDetails() {
       (_, index) => startPage + index,
     );
   }, [safeCurrentPage, totalPages]);
+
+  if (isLoading) {
+    return <PatientDetailsSkeleton />;
+  }
 
   return (
     <div className="space-y-6">
@@ -254,6 +341,12 @@ export function PatientDetails() {
             id: `patient-created-${createdPatient.id}`,
             message: `${createdPatient.name} was added to the patient roster.`,
             title: "Patient added",
+          });
+          show({
+            id: `toast-patient-created-${createdPatient.id}`,
+            message: `${createdPatient.name} has been successfully registered.`,
+            title: "Patient added",
+            tone: "success",
           });
         }}
       />

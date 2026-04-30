@@ -93,6 +93,15 @@ export interface NotificationItem {
   read: boolean
 }
 
+export type ToastTone = 'success' | 'error' | 'info'
+
+export interface ToastItem {
+  id: string
+  title: string
+  message: string
+  tone: ToastTone
+}
+
 export interface AiSummaryPayload {
   patient: Patient
 }
