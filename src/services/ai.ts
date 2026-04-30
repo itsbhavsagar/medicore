@@ -6,6 +6,11 @@ interface StreamAiSummaryOptions {
   onToken: (token: string) => void
 }
 
+interface AiSummaryResponse {
+  summary?: string
+  error?: string
+}
+
 export async function streamAiPatientSummary({
   onToken,
   patient,
@@ -21,9 +26,32 @@ export async function streamAiPatientSummary({
   })
 
   if (!response.ok) {
+    const contentType = response.headers.get("content-type") ?? ""
+
+    if (contentType.includes("application/json")) {
+      const payload = (await response.json()) as AiSummaryResponse
+
+      throw new Error(payload.error || "Unable to generate AI summary right now.")
+    }
+
     const message = await response.text()
 
     throw new Error(message || 'Unable to generate AI summary right now.')
+  }
+
+  const contentType = response.headers.get("content-type") ?? ""
+
+  if (contentType.includes("application/json")) {
+    const payload = (await response.json()) as AiSummaryResponse
+    const summary = payload.summary?.trim()
+
+    if (!summary) {
+      throw new Error(payload.error || "No summary was generated.")
+    }
+
+    onToken(summary)
+
+    return summary
   }
 
   if (!response.body) {
