@@ -78,7 +78,7 @@ export function PatientDetails() {
         <div className="flex flex-col gap-3 sm:gap-5 md:flex-row md:items-center md:justify-between">
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-2 text-xs sm:text-sm font-medium text-muted">
-              <span className="h-2 w-2 rounded-full bg-accent flex-shrink-0" />
+              <span className="h-2 w-2 rounded-full bg-accent shrink-0" />
               <span>patients</span>
             </p>
             <h2 className="mt-2 sm:mt-3 text-lg sm:text-2xl md:text-[28px] font-medium tracking-[-0.03em] text-foreground line-clamp-2 sm:line-clamp-none">
@@ -89,7 +89,7 @@ export function PatientDetails() {
               keeping the current patient selection in shared state.
             </p>
           </div>
-          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3 flex-shrink-0">
+          <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3 shrink-0">
             <ViewToggle
               onChange={(value) => {
                 setView(value);
@@ -107,48 +107,61 @@ export function PatientDetails() {
         </div>
       </Card>
 
-      <div className="flex flex-col gap-3 md:gap-4">
-        <div className="flex w-full flex-col gap-3 md:max-w-3xl md:flex-row md:items-center">
-          <div className="relative flex-1 min-w-0">
-            <Search className="pointer-events-none absolute left-3 sm:left-4 top-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 -translate-y-1/2 text-subtle flex-shrink-0" />
-            <input
-              className="h-9 sm:h-12 w-full rounded-xl border border-border bg-surface px-9 sm:px-12 text-xs sm:text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
-              onChange={(event) => {
-                setLocalSearch(event.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder="Search patient, diagnosis, doctor..."
-              type="search"
-              value={localSearch}
-            />
-          </div>
-          <div className="flex flex-col gap-1 text-xs sm:text-sm text-muted">
-            <span>Rows per page</span>
-            <select
-              className="h-9 w-24 cursor-pointer rounded-xl border border-border bg-surface px-3 text-xs sm:text-sm text-foreground outline-none"
-              onChange={(event) => {
-                setPageSize(
-                  Number(event.target.value) as (typeof pageSizeOptions)[number],
-                );
-                setCurrentPage(1);
-              }}
-              value={pageSize}
-            >
-              {pageSizeOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+        <div className="relative flex-1 min-w-0">
+          <Search className="pointer-events-none absolute left-3 sm:left-4 top-1/2 h-3.5 w-3.5 sm:h-4 sm:w-4 -translate-y-1/2 text-subtle shrink-0" />
+          <input
+            className="h-9 sm:h-10 w-full rounded-xl border border-border bg-surface px-9 sm:px-12 text-xs sm:text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
+            onChange={(event) => {
+              setLocalSearch(event.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search patient, diagnosis, doctor..."
+            type="search"
+            value={localSearch}
+          />
         </div>
-        <p className="text-xs text-muted sm:text-sm">
-          Showing {paginatedPatients.length} of {filteredPatients.length} patients
-        </p>
+
+        <div className="hidden sm:flex  items-center gap-2 shrink-0 sm:ml-auto">
+          <span className="text-xs sm:text-sm text-muted whitespace-nowrap">
+            Rows per page
+          </span>
+          <select
+            className="h-9 sm:h-10 w-20 cursor-pointer rounded-xl border border-border bg-surface px-3 text-xs sm:text-sm text-foreground outline-none transition focus:border-primary"
+            onChange={(event) => {
+              setPageSize(
+                Number(event.target.value) as (typeof pageSizeOptions)[number],
+              );
+              setCurrentPage(1);
+            }}
+            value={pageSize}
+          >
+            {pageSizeOptions.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      
+
       <AnimatePresence mode="wait">
-        {viewMode === "grid" ? (
+        {paginatedPatients.length === 0 ? (
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border bg-surface py-16 text-center"
+            initial={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.22 }}
+          >
+            <Search className="h-8 w-8 text-subtle" />
+            <p className="text-sm font-medium text-foreground">
+              No patients found
+            </p>
+            <p className="text-xs text-muted">
+              Try adjusting your search query
+            </p>
+          </motion.div>
+        ) : viewMode === "grid" ? (
           <motion.section
             animate={{ opacity: 1, y: 0 }}
             className="grid gap-3 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
@@ -187,44 +200,46 @@ export function PatientDetails() {
           </motion.section>
         )}
       </AnimatePresence>
-      <div className="flex justify-center rounded-xl border border-border bg-surface p-2 sm:p-4">
-        <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
-          <Button
-            className="cursor-pointer min-h-8 sm:min-h-9 px-2 sm:px-3 text-xs sm:text-sm"
-            disabled={safeCurrentPage === 1}
-            onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-            size="sm"
-            variant="secondary"
-          >
-            Prev
-          </Button>
-          {visiblePages.map((page) => (
-            <button
-              className={
-                page === safeCurrentPage
-                  ? "h-8 sm:h-9 min-w-8 sm:min-w-9 cursor-pointer rounded-xl bg-primary text-xs sm:text-sm font-medium text-white"
-                  : "h-8 sm:h-9 min-w-8 sm:min-w-9 cursor-pointer rounded-xl border border-border bg-surface text-xs sm:text-sm font-medium text-foreground"
-              }
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              type="button"
+      {paginatedPatients.length > 0 && (
+        <div className="flex justify-center rounded-xl border border-border bg-surface p-2 sm:p-4">
+          <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-2">
+            <Button
+              className="cursor-pointer min-h-8 sm:min-h-9 px-2 sm:px-3 text-xs sm:text-sm"
+              disabled={safeCurrentPage === 1}
+              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+              size="sm"
+              variant="secondary"
             >
-              {page}
-            </button>
-          ))}
-          <Button
-            className="cursor-pointer"
-            disabled={safeCurrentPage === totalPages}
-            onClick={() =>
-              setCurrentPage((page) => Math.min(totalPages, page + 1))
-            }
-            size="sm"
-            variant="secondary"
-          >
-            Next
-          </Button>
+              Prev
+            </Button>
+            {visiblePages.map((page) => (
+              <button
+                className={
+                  page === safeCurrentPage
+                    ? "h-8 sm:h-9 min-w-8 sm:min-w-9 cursor-pointer rounded-xl bg-primary text-xs sm:text-sm font-medium text-white"
+                    : "h-8 sm:h-9 min-w-8 sm:min-w-9 cursor-pointer rounded-xl border border-border bg-surface text-xs sm:text-sm font-medium text-foreground"
+                }
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                type="button"
+              >
+                {page}
+              </button>
+            ))}
+            <Button
+              className="cursor-pointer"
+              disabled={safeCurrentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((page) => Math.min(totalPages, page + 1))
+              }
+              size="sm"
+              variant="secondary"
+            >
+              Next
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       <PatientSidePanel
         onClose={() => selectPatient(null)}
