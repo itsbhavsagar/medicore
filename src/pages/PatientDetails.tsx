@@ -91,18 +91,40 @@ export function PatientDetails() {
       </Card>
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative w-full max-w-xl">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" />
-          <input
-            className="h-12 w-full rounded-xl border border-border bg-surface px-12 text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
-            onChange={(event) => {
-              setLocalSearch(event.target.value)
-              setCurrentPage(1)
-            }}
-            placeholder="Search by patient, diagnosis, doctor, department, or room"
-            type="search"
-            value={localSearch}
-          />
+        <div className="flex w-full flex-col gap-3 lg:max-w-3xl lg:flex-row lg:items-center">
+          <div className="relative flex-1">
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-subtle" />
+            <input
+              className="h-12 w-full rounded-xl border border-border bg-surface px-12 text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
+              onChange={(event) => {
+                setLocalSearch(event.target.value)
+                setCurrentPage(1)
+              }}
+              placeholder="Search by patient, diagnosis, doctor, department, or room"
+              type="search"
+              value={localSearch}
+            />
+          </div>
+          <div className="flex items-center gap-2 text-sm text-muted">
+            <span>Rows per page</span>
+            {pageSizeOptions.map((option) => (
+              <button
+                className={
+                  option === pageSize
+                    ? 'cursor-pointer rounded-full bg-primary-soft px-3 py-1 text-sm font-medium text-foreground'
+                    : 'cursor-pointer rounded-full px-3 py-1 text-sm font-medium text-muted'
+                }
+                key={option}
+                onClick={() => {
+                  setPageSize(option)
+                  setCurrentPage(1)
+                }}
+                type="button"
+              >
+                {option}
+              </button>
+            ))}
+          </div>
         </div>
         <p className="text-sm text-muted">
           Showing {paginatedPatients.length} of {filteredPatients.length} patients
@@ -149,29 +171,7 @@ export function PatientDetails() {
           </motion.section>
         )}
       </AnimatePresence>
-
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex items-center gap-2 text-sm text-muted">
-          <span>Rows per page</span>
-          {pageSizeOptions.map((option) => (
-            <button
-              className={
-                option === pageSize
-                  ? 'cursor-pointer rounded-full bg-primary-soft px-3 py-1 text-sm font-medium text-foreground'
-                  : 'cursor-pointer rounded-full px-3 py-1 text-sm font-medium text-muted'
-              }
-              key={option}
-              onClick={() => {
-                setPageSize(option)
-                setCurrentPage(1)
-              }}
-              type="button"
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 md:flex-row md:items-center md:justify-end">
         <div className="flex items-center gap-3">
           <Button
             className="cursor-pointer"

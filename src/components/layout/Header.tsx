@@ -44,7 +44,7 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
           onClick={toggleTheme}
         />
         <Button
-          className="cursor-pointer"
+          className="cursor-pointer gap-2.5"
           onClick={() => {
             setIsAlertOpen((current) => !current)
             if (!isAlertOpen) {
@@ -54,7 +54,9 @@ export function Header({ subtitle, title, userName }: HeaderProps) {
           size="sm"
           variant="secondary"
         >
-          <Bell className="h-4 w-4" />
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-soft text-primary">
+            <Bell className="h-3.5 w-3.5" />
+          </span>
           Alerts {notifications.length > 0 ? `(${unreadCount || notifications.length})` : ''}
         </Button>
         {isAlertOpen ? (

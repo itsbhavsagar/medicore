@@ -53,12 +53,14 @@ export function Sidebar({ onLogout }: SidebarProps) {
           3 critical patients need review this morning.
         </p>
         <Button
-          className="w-full cursor-pointer justify-center rounded-xl"
+          className="w-full cursor-pointer justify-center gap-2.5 rounded-xl"
           onClick={onLogout}
           size="sm"
           variant="secondary"
         >
-          <LogOut className="h-4 w-4" />
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary-soft text-primary">
+            <LogOut className="h-3.5 w-3.5" />
+          </span>
           Sign out
         </Button>
       </div>

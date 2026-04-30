@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
-import { useMemo, useState, type FormEvent } from 'react'
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react'
 import type {
   BloodType,
   Department,
@@ -75,6 +75,19 @@ export function AddPatientModal({
     [formState],
   )
 
+  useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [isOpen])
+
   const updateField = <Key extends keyof NewPatientInput>(
     field: Key,
     value: NewPatientInput[Key],
@@ -126,14 +139,14 @@ export function AddPatientModal({
           />
           <motion.div
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="fixed inset-x-4 top-6 z-50 mx-auto w-full max-w-3xl"
+            className="fixed inset-x-4 top-4 z-50 mx-auto w-full max-w-2xl"
             initial={{ opacity: 0, scale: 0.98, y: 12 }}
             transition={{ duration: 0.22 }}
           >
-            <Card className="p-6">
+            <Card className="max-h-[calc(100vh-2rem)] overflow-y-auto p-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[24px] font-medium tracking-[-0.03em] text-foreground">
+                  <p className="text-[22px] font-medium tracking-[-0.03em] text-foreground">
                     Add patient
                   </p>
                   <p className="mt-1 text-sm text-muted">
@@ -145,18 +158,18 @@ export function AddPatientModal({
                 </Button>
               </div>
 
-              <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
-                <div className="grid gap-4 md:grid-cols-2">
+              <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
+                <div className="grid gap-3 md:grid-cols-2">
                   <Field label="Full name" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('name', event.target.value)}
                       value={formState.name}
                     />
                   </Field>
                   <Field label="Age" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       min="0"
                       onChange={(event) => updateField('age', Number(event.target.value))}
                       type="number"
@@ -165,28 +178,28 @@ export function AddPatientModal({
                   </Field>
                   <Field label="Diagnosis" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('diagnosis', event.target.value)}
                       value={formState.diagnosis}
                     />
                   </Field>
                   <Field label="Room number" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('roomNumber', event.target.value)}
                       value={formState.roomNumber}
                     />
                   </Field>
                   <Field label="Doctor" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('doctor', event.target.value)}
                       value={formState.doctor}
                     />
                   </Field>
                   <Field label="Status">
                     <select
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('status', event.target.value as PatientStatus)}
                       value={formState.status}
                     >
@@ -199,7 +212,7 @@ export function AddPatientModal({
                   </Field>
                   <Field label="Department">
                     <select
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('department', event.target.value as Department)}
                       value={formState.department}
                     >
@@ -212,7 +225,7 @@ export function AddPatientModal({
                   </Field>
                   <Field label="Gender">
                     <select
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('gender', event.target.value as Gender)}
                       value={formState.gender}
                     >
@@ -225,7 +238,7 @@ export function AddPatientModal({
                   </Field>
                   <Field label="Blood type">
                     <select
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('bloodType', event.target.value as BloodType)}
                       value={formState.bloodType}
                     >
@@ -238,14 +251,14 @@ export function AddPatientModal({
                   </Field>
                   <Field label="Emergency contact" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('emergencyContactName', event.target.value)}
                       value={formState.emergencyContactName}
                     />
                   </Field>
                   <Field label="Relationship" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) =>
                         updateField('emergencyContactRelationship', event.target.value)
                       }
@@ -254,20 +267,20 @@ export function AddPatientModal({
                   </Field>
                   <Field label="Contact phone" required>
                     <input
-                      className="h-11 w-full rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => updateField('emergencyContactPhone', event.target.value)}
                       value={formState.emergencyContactPhone}
                     />
                   </Field>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">
                     Medications
                   </label>
                   <div className="flex gap-3">
                     <input
-                      className="h-11 flex-1 rounded-xl border border-border bg-surface-elevated px-4 text-sm text-foreground outline-none"
+                      className="h-10 flex-1 rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       onChange={(event) => setMedicationInput(event.target.value)}
                       placeholder="Add medication"
                       value={medicationInput}
@@ -297,7 +310,7 @@ export function AddPatientModal({
 
                 {error ? <p className="text-sm text-muted">{error}</p> : null}
 
-                <div className="flex justify-end gap-3">
+                <div className="flex justify-end gap-3 pt-1">
                   <Button className="cursor-pointer" onClick={onClose} variant="secondary">
                     Cancel
                   </Button>
@@ -319,7 +332,7 @@ function Field({
   label,
   required = false,
 }: {
-  children: React.ReactNode
+  children: ReactNode
   label: string
   required?: boolean
 }) {
