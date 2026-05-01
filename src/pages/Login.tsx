@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { startTransition, type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -66,8 +66,7 @@ function EKGLine() {
 }
 
 export function Login() {
-  const { clearError, isInitialized, isLoading, login, loginWithGoogle, user } =
-    useAuth();
+  const { isInitialized, isLoading, login, loginWithGoogle, user } = useAuth();
   const { show } = useToasts();
   const [formState, setFormState] = useState<FormState>(initialFormState);
   const [fieldErrors, setFieldErrors] = useState<Partial<FormState>>({});
@@ -106,11 +105,8 @@ export function Login() {
   }
 
   const handleChange = (field: keyof FormState, value: string) => {
-    startTransition(() => {
-      setFormState((current) => ({ ...current, [field]: value }));
-      setFieldErrors((current) => ({ ...current, [field]: undefined }));
-      clearError();
-    });
+    setFormState((current) => ({ ...current, [field]: value }));
+    setFieldErrors((current) => ({ ...current, [field]: undefined }));
   };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {

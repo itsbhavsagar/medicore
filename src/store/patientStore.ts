@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { mockPatients } from '../data/mockPatients'
+import { fetchPatientsData } from '../services/patients'
 import type { NewPatientInput, Patient, ViewMode } from '../types'
 
 const DEFAULT_VITALS = {
@@ -10,6 +10,9 @@ const DEFAULT_VITALS = {
 }
 
 interface PatientStoreState {
+  initialize: () => Promise<void>
+  isLoading: boolean
+  isLoaded: boolean
   patients: Patient[]
   selectedPatient: Patient | null
   viewMode: ViewMode
@@ -21,7 +24,27 @@ interface PatientStoreState {
 }
 
 export const usePatientStore = create<PatientStoreState>((set) => ({
-  patients: mockPatients,
+  initialize: async () => {
+    set({ isLoading: true })
+
+    try {
+      const patients = await fetchPatientsData()
+      set({
+        isLoaded: true,
+        isLoading: false,
+        patients,
+      })
+    } catch {
+      set({
+        isLoaded: true,
+        isLoading: false,
+        patients: [],
+      })
+    }
+  },
+  isLoading: false,
+  isLoaded: false,
+  patients: [],
   selectedPatient: null,
   viewMode: 'grid',
   searchQuery: '',

@@ -87,15 +87,17 @@ export function Sidebar({ onLogout }: SidebarProps) {
             3 critical patients need review this morning.
           </p>
           <Button
-            className="w-full flex items-center justify-center gap-2.5 rounded-xl cursor-pointer"
+            className="w-full cursor-pointer"
+            iconLeft={
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary">
+                <LogOut className="h-4 w-4" />
+              </span>
+            }
             onClick={onLogout}
             size="sm"
             variant="secondary"
           >
-            <span className="inline-flex! h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-soft text-primary mr-4">
-              <LogOut className="h-4 w-4" />
-            </span>
-            <span className="inline-flex items-center">Sign out</span>
+            Sign out
           </Button>
         </div>
       </aside>

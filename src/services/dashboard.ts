@@ -1,4 +1,5 @@
 import { dashboardStats, recentActivity } from "../data/mockPatients";
+import { createMockResource } from "./mockResource";
 
 const MIN_DASHBOARD_DELAY_MS = 500;
 const MAX_DASHBOARD_DELAY_MS = 800;
@@ -8,33 +9,13 @@ interface DashboardData {
   stats: typeof dashboardStats;
 }
 
-let cachedDashboardData: DashboardData | null = null;
-let pendingDashboardRequest: Promise<DashboardData> | null = null;
-
-const getDelay = () =>
-  Math.floor(
-    Math.random() * (MAX_DASHBOARD_DELAY_MS - MIN_DASHBOARD_DELAY_MS + 1),
-  ) + MIN_DASHBOARD_DELAY_MS;
-
-export async function fetchDashboardData() {
-  if (cachedDashboardData) {
-    return cachedDashboardData;
-  }
-
-  if (!pendingDashboardRequest) {
-    pendingDashboardRequest = new Promise<DashboardData>((resolve) => {
-      window.setTimeout(() => {
-        const response = {
-          activity: recentActivity,
-          stats: dashboardStats,
-        };
-
-        cachedDashboardData = response;
-        pendingDashboardRequest = null;
-        resolve(response);
-      }, getDelay());
-    });
-  }
-
-  return pendingDashboardRequest;
-}
+export const fetchDashboardData = createMockResource<DashboardData>(
+  () => ({
+    activity: recentActivity,
+    stats: dashboardStats,
+  }),
+  {
+    maxDelayMs: MAX_DASHBOARD_DELAY_MS,
+    minDelayMs: MIN_DASHBOARD_DELAY_MS,
+  },
+);

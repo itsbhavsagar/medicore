@@ -2,12 +2,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, type ReactNode } from "react";
 import { usePatientForm } from "../../hooks/usePatientForm";
-import type {
-  BloodType,
-  Department,
-  Gender,
-  PatientStatus,
-} from "../../types";
+
+import type { BloodType, Department, Gender, PatientStatus } from "../../types";
 import {
   FIELD_MAX_LENGTH,
   getFieldCharacterCount,
@@ -21,7 +17,9 @@ import { Select } from "../ui/Select";
 interface AddPatientModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (patient: import("../../types").NewPatientInput) => void | Promise<void>;
+  onSubmit: (
+    patient: import("../../types").NewPatientInput,
+  ) => void | Promise<void>;
 }
 
 const genderOptions: Gender[] = ["Male", "Female", "Non-binary"];
@@ -158,7 +156,8 @@ export function AddPatientModal({
                       value={values.name}
                     />
                     <FieldHint id="patient-name-hint">
-                      {getFieldCharacterCount(values.name)}/{FIELD_MAX_LENGTH.name}
+                      {getFieldCharacterCount(values.name)}/
+                      {FIELD_MAX_LENGTH.name}
                     </FieldHint>
                   </Field>
                   <Field
@@ -177,7 +176,10 @@ export function AddPatientModal({
                       min="1"
                       onBlur={() => handleBlur("age")}
                       onChange={(event) =>
-                        setFieldValue("age", sanitizeAgeInput(event.target.value))
+                        setFieldValue(
+                          "age",
+                          sanitizeAgeInput(event.target.value),
+                        )
                       }
                       pattern="[0-9]*"
                       step="1"
@@ -193,7 +195,9 @@ export function AddPatientModal({
                   >
                     <input
                       aria-describedby="patient-diagnosis-error patient-diagnosis-hint"
-                      aria-invalid={Boolean(touched.diagnosis && errors.diagnosis)}
+                      aria-invalid={Boolean(
+                        touched.diagnosis && errors.diagnosis,
+                      )}
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       id="patient-diagnosis"
                       maxLength={FIELD_MAX_LENGTH.diagnosis}
@@ -216,7 +220,9 @@ export function AddPatientModal({
                   >
                     <input
                       aria-describedby="patient-room-error patient-room-hint"
-                      aria-invalid={Boolean(touched.roomNumber && errors.roomNumber)}
+                      aria-invalid={Boolean(
+                        touched.roomNumber && errors.roomNumber,
+                      )}
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       id="patient-room"
                       maxLength={FIELD_MAX_LENGTH.roomNumber}
@@ -249,7 +255,8 @@ export function AddPatientModal({
                       value={values.doctor}
                     />
                     <FieldHint id="patient-doctor-hint">
-                      {getFieldCharacterCount(values.doctor)}/{FIELD_MAX_LENGTH.doctor}
+                      {getFieldCharacterCount(values.doctor)}/
+                      {FIELD_MAX_LENGTH.doctor}
                     </FieldHint>
                   </Field>
                   <Field
@@ -264,7 +271,10 @@ export function AddPatientModal({
                       id="patient-status"
                       onBlur={() => handleBlur("status")}
                       onChange={(event) =>
-                        setFieldValue("status", event.target.value as PatientStatus)
+                        setFieldValue(
+                          "status",
+                          event.target.value as PatientStatus,
+                        )
                       }
                       value={values.status}
                     >
@@ -365,21 +375,24 @@ export function AddPatientModal({
                         : undefined
                     }
                     htmlFor="patient-emergency-name"
-                    label="Emergency contact"
+                    label="Emergency contact Name"
                     required
                   >
                     <input
                       aria-describedby="patient-emergency-name-error patient-emergency-name-hint"
                       aria-invalid={Boolean(
                         touched.emergencyContactName &&
-                          errors.emergencyContactName,
+                        errors.emergencyContactName,
                       )}
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       id="patient-emergency-name"
                       maxLength={FIELD_MAX_LENGTH.emergencyContactName}
                       onBlur={() => handleBlur("emergencyContactName")}
                       onChange={(event) =>
-                        setFieldValue("emergencyContactName", event.target.value)
+                        setFieldValue(
+                          "emergencyContactName",
+                          event.target.value,
+                        )
                       }
                       value={values.emergencyContactName}
                     />
@@ -402,7 +415,7 @@ export function AddPatientModal({
                       aria-describedby="patient-emergency-relationship-error patient-emergency-relationship-hint"
                       aria-invalid={Boolean(
                         touched.emergencyContactRelationship &&
-                          errors.emergencyContactRelationship,
+                        errors.emergencyContactRelationship,
                       )}
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       id="patient-emergency-relationship"
@@ -417,8 +430,10 @@ export function AddPatientModal({
                       value={values.emergencyContactRelationship}
                     />
                     <FieldHint id="patient-emergency-relationship-hint">
-                      {getFieldCharacterCount(values.emergencyContactRelationship)}/
-                      {FIELD_MAX_LENGTH.emergencyContactRelationship}
+                      {getFieldCharacterCount(
+                        values.emergencyContactRelationship,
+                      )}
+                      /{FIELD_MAX_LENGTH.emergencyContactRelationship}
                     </FieldHint>
                   </Field>
                   <Field
@@ -435,7 +450,7 @@ export function AddPatientModal({
                       aria-describedby="patient-emergency-phone-error patient-emergency-phone-hint"
                       aria-invalid={Boolean(
                         touched.emergencyContactPhone &&
-                          errors.emergencyContactPhone,
+                        errors.emergencyContactPhone,
                       )}
                       className="h-10 w-full rounded-xl border border-border bg-surface-elevated px-3 text-sm text-foreground outline-none"
                       id="patient-emergency-phone"
@@ -490,7 +505,10 @@ export function AddPatientModal({
                     </Button>
                   </div>
                   {medicationError ? (
-                    <p className="text-xs text-danger" id="patient-medication-error">
+                    <p
+                      className="text-xs text-danger"
+                      id="patient-medication-error"
+                    >
                       {medicationError}
                     </p>
                   ) : null}
@@ -572,13 +590,7 @@ function Field({
   );
 }
 
-function FieldHint({
-  children,
-  id,
-}: {
-  children: ReactNode;
-  id: string;
-}) {
+function FieldHint({ children, id }: { children: ReactNode; id: string }) {
   return (
     <p className="text-[11px] text-subtle" id={id}>
       {children}
