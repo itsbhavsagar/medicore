@@ -93,9 +93,22 @@
 html {
   background-color: var(--app-background);
   color: var(--app-text);
-  transition:
-    background-color 180ms ease,
-    color 180ms ease;
+}
+
+html.theme-transition,
+html.theme-transition body,
+html.theme-transition #root,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition-property:
+    background-color,
+    color,
+    border-color,
+    fill,
+    stroke;
+  transition-duration: 280ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 body {

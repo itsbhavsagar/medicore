@@ -3,6 +3,8 @@ import type { ThemeMode } from '../types'
 
 const THEME_STORAGE_KEY = 'medicore-theme'
 const DARK_MEDIA_QUERY = '(prefers-color-scheme: dark)'
+const THEME_TRANSITION_CLASS = 'theme-transition'
+const THEME_TRANSITION_DURATION_MS = 280
 
 const getSystemTheme = (): ThemeMode =>
   window.matchMedia(DARK_MEDIA_QUERY).matches ? 'dark' : 'light'
@@ -21,10 +23,59 @@ const readInitialTheme = (): ThemeMode => {
   return getSystemTheme()
 }
 
-const applyTheme = (theme: ThemeMode) => {
-  document.documentElement.dataset.theme = theme
-  document.documentElement.style.colorScheme = theme
-  window.localStorage.setItem(THEME_STORAGE_KEY, theme)
+let themeTransitionTimeoutId: number | null = null
+
+interface ApplyThemeOptions {
+  persist?: boolean
+  withTransition?: boolean
+}
+
+export const applyTheme = (
+  theme: ThemeMode,
+  { persist = true, withTransition = false }: ApplyThemeOptions = {},
+) => {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const root = document.documentElement
+
+  if (themeTransitionTimeoutId !== null) {
+    window.clearTimeout(themeTransitionTimeoutId)
+    themeTransitionTimeoutId = null
+  }
+
+  const commitTheme = () => {
+    root.dataset.theme = theme
+    root.style.colorScheme = theme
+
+    if (persist && typeof window !== 'undefined') {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme)
+    }
+  }
+
+  if (!withTransition) {
+    root.classList.remove(THEME_TRANSITION_CLASS)
+    commitTheme()
+    return
+  }
+
+  root.classList.add(THEME_TRANSITION_CLASS)
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      commitTheme()
+
+      themeTransitionTimeoutId = window.setTimeout(() => {
+        root.classList.remove(THEME_TRANSITION_CLASS)
+        themeTransitionTimeoutId = null
+      }, THEME_TRANSITION_DURATION_MS)
+    })
+  })
+}
+
+if (typeof document !== 'undefined') {
+  applyTheme(readInitialTheme(), { persist: false, withTransition: false })
 }
 
 interface ThemeStoreState {
@@ -37,12 +88,12 @@ export const useThemeStore = create<ThemeStoreState>((set, get) => ({
   theme: readInitialTheme(),
   initialize: () => {
     const theme = readInitialTheme()
-    applyTheme(theme)
+    applyTheme(theme, { withTransition: false })
     set({ theme })
   },
   toggle: () => {
     const nextTheme: ThemeMode = get().theme === 'dark' ? 'light' : 'dark'
-    applyTheme(nextTheme)
+    applyTheme(nextTheme, { withTransition: true })
     set({ theme: nextTheme })
   },
 }))
