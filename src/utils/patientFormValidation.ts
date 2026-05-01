@@ -13,7 +13,6 @@ export const FIELD_MAX_LENGTH = {
 
 const POSITIVE_INTEGER_PATTERN = /^\d+$/;
 const ROOM_NUMBER_PATTERN = /^[A-Za-z0-9-]{1,24}$/;
-const PHONE_PATTERN = /^(?:\+?[1-9]\d{7,14}|[6-9]\d{9})$/;
 const TEXT_PATTERN = /[A-Za-z]/;
 
 export interface PatientFormValues extends Omit<
