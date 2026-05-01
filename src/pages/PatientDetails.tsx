@@ -9,6 +9,7 @@ import { PatientSidePanel } from "../components/patients/PatientSidePanel";
 import { ViewToggle } from "../components/patients/ViewToggle";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { Select } from "../components/ui/Select";
 import { Skeleton } from "../components/ui/Skeleton";
 import { useNotifications } from "../hooks/useNotifications";
 import { usePatients } from "../hooks/usePatients";
@@ -213,8 +214,8 @@ export function PatientDetails() {
           <span className="text-xs sm:text-sm text-muted whitespace-nowrap">
             Rows per page
           </span>
-          <select
-            className="h-9 sm:h-10 w-20 cursor-pointer rounded-xl border border-border bg-surface px-3 text-xs sm:text-sm text-foreground outline-none transition focus:border-primary"
+          <Select
+            className="h-9 sm:h-10 w-20 cursor-pointer bg-surface px-3 pr-9 text-xs sm:text-sm"
             onChange={(event) => {
               setPageSize(
                 Number(event.target.value) as (typeof pageSizeOptions)[number],
@@ -228,7 +229,7 @@ export function PatientDetails() {
                 {option}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
