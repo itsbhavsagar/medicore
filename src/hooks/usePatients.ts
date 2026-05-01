@@ -2,6 +2,9 @@ import { useDeferredValue, useMemo } from 'react'
 import { usePatientStore } from '../store/patientStore'
 
 export const usePatients = () => {
+  const initialize = usePatientStore((state) => state.initialize)
+  const isLoaded = usePatientStore((state) => state.isLoaded)
+  const isLoading = usePatientStore((state) => state.isLoading)
   const patients = usePatientStore((state) => state.patients)
   const selectedPatient = usePatientStore((state) => state.selectedPatient)
   const viewMode = usePatientStore((state) => state.viewMode)
@@ -31,6 +34,9 @@ export const usePatients = () => {
   }, [deferredSearch, patients])
 
   return {
+    initialize,
+    isLoaded,
+    isLoading,
     patients,
     filteredPatients,
     selectedPatient,

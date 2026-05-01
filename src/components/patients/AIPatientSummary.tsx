@@ -126,22 +126,22 @@ export function AIPatientSummary({ patient }: AIPatientSummaryProps) {
         <div className="flex w-full flex-wrap items-center gap-3 xl:w-auto xl:justify-end">
           {isStreaming ? <Badge tone="info">Streaming</Badge> : null}
           <Button
+            iconLeft={<Sparkles className="h-4 w-4" />}
             loading={isStreaming}
             onClick={handleGenerate}
             variant="primary"
             className="min-w-0 flex-1 cursor-pointer px-4 sm:flex-none"
             disabled={generatedOnce}
           >
-            <Sparkles className="h-4 w-4 inline-flex! mr-2" />
             {generatedOnce ? "Already Generated" : "Generate AI Summary"}
           </Button>
           {isStreaming ? (
             <Button
               className="flex-1 px-4 sm:flex-none"
+              iconLeft={<Square className="h-4 w-4" />}
               onClick={handleStop}
               variant="danger"
             >
-              <Square className="h-4 w-4 inline-flex! mr-2" />
               Stop
             </Button>
           ) : null}

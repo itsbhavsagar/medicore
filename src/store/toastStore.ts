@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { ToastItem, ToastTone } from '../types'
+import type { ToastItem } from '../types'
 
 const TOAST_AUTO_DISMISS_MS = 4000
 
@@ -37,12 +37,3 @@ export const useToastStore = create<ToastStoreState>((set) => ({
     }, TOAST_AUTO_DISMISS_MS)
   },
 }))
-
-export const toastPresets: Record<
-  ToastTone,
-  { accentClass: string }
-> = {
-  success: { accentClass: 'bg-success' },
-  error: { accentClass: 'bg-danger' },
-  info: { accentClass: 'bg-accent' },
-}

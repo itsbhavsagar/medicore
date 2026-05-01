@@ -166,7 +166,7 @@ export function PatientSidePanel({ onClose, patient }: PatientSidePanelProps) {
                   </div>
                 </Card>
 
-                <AIPatientSummary patient={patient} />
+                <AIPatientSummary key={patient.id} patient={patient} />
               </div>
             </Card>
           </motion.aside>

@@ -14,7 +14,6 @@ import { Skeleton } from "../components/ui/Skeleton";
 import { useNotifications } from "../hooks/useNotifications";
 import { usePatients } from "../hooks/usePatients";
 import { useToasts } from "../hooks/useToasts";
-import { fetchPatientsData } from "../services/patients";
 
 const SEARCH_DEBOUNCE_MS = 250;
 const pageSizeOptions = [5, 10, 25, 100] as const;
@@ -79,6 +78,9 @@ export function PatientDetails() {
   const {
     addPatient,
     filteredPatients,
+    initialize,
+    isLoaded,
+    isLoading,
     selectedPatient,
     searchQuery,
     selectPatient,
@@ -89,10 +91,9 @@ export function PatientDetails() {
   const { add: addNotification } = useNotifications();
   const { show } = useToasts();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState<(typeof pageSizeOptions)[number]>(5);
-  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [draftSearchQuery, setDraftSearchQuery] = useState(searchQuery);
   const isAddModalOpen = searchParams.get("new") === "1";
 
   const totalPages = Math.max(1, Math.ceil(filteredPatients.length / pageSize));
@@ -104,35 +105,19 @@ export function PatientDetails() {
   }, [filteredPatients, pageSize, safeCurrentPage]);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const loadPatients = async () => {
-      setIsLoading(true);
-
-      try {
-        await fetchPatientsData();
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    void loadPatients();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    if (!isLoaded) {
+      void initialize();
+    }
+  }, [initialize, isLoaded]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(
-      () => setSearch(localSearch),
+      () => setSearch(draftSearchQuery),
       SEARCH_DEBOUNCE_MS,
     );
 
     return () => window.clearTimeout(timeoutId);
-  }, [localSearch, setSearch]);
+  }, [draftSearchQuery, setSearch]);
 
   const openAddPatient = () => {
     setSearchParams({ new: "1" });
@@ -201,12 +186,12 @@ export function PatientDetails() {
           <input
             className="h-9 sm:h-10 w-full rounded-xl border border-border bg-surface px-9 sm:px-12 text-xs sm:text-sm text-foreground outline-none transition placeholder:text-subtle focus:border-primary"
             onChange={(event) => {
-              setLocalSearch(event.target.value);
+              setDraftSearchQuery(event.target.value);
               setCurrentPage(1);
             }}
             placeholder="Search patient, diagnosis, doctor..."
             type="search"
-            value={localSearch}
+            value={draftSearchQuery}
           />
         </div>
 

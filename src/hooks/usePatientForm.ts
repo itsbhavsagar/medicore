@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react'
-import type { NewPatientInput } from '../types'
+import { useCallback, useState } from "react";
+import type { NewPatientInput } from "../types";
 import {
   buildPatientPayload,
   getNormalizedMedication,
@@ -9,108 +9,111 @@ import {
   type PatientFormValues,
   validateMedicationInput,
   validatePatientForm,
-} from '../utils/patientFormValidation'
+} from "../utils/patientFormValidation";
 
-type SubmitPatientHandler = (
-  patient: NewPatientInput,
-) => void | Promise<void>
+type SubmitPatientHandler = (patient: NewPatientInput) => void | Promise<void>;
 
-const getEmptyTouchedState = () => ({}) as Partial<
-  Record<PatientFormField, boolean>
->
+const getEmptyTouchedState = () =>
+  ({}) as Partial<Record<PatientFormField, boolean>>;
 
 export function usePatientForm(onSubmit: SubmitPatientHandler) {
-  const [values, setValues] = useState<PatientFormValues>(initialPatientFormValues)
-  const [errors, setErrors] = useState<PatientFormErrors>({})
-  const [touched, setTouched] = useState(getEmptyTouchedState)
-  const [medicationInput, setMedicationInput] = useState('')
-  const [medicationError, setMedicationError] = useState<string | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [values, setValues] = useState<PatientFormValues>(
+    initialPatientFormValues,
+  );
+  const [errors, setErrors] = useState<PatientFormErrors>({});
+  const [touched, setTouched] = useState(getEmptyTouchedState);
+  const [medicationInput, setMedicationInput] = useState("");
+  const [medicationError, setMedicationError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isValid = Object.keys(validatePatientForm(values)).length === 0
+  const isValid = Object.keys(validatePatientForm(values)).length === 0;
 
   const setFieldValue = useCallback(
-    <Key extends PatientFormField>(field: Key, value: PatientFormValues[Key]) => {
+    <Key extends PatientFormField>(
+      field: Key,
+      value: PatientFormValues[Key],
+    ) => {
       setValues((current) => {
-        const nextValues = { ...current, [field]: value }
+        const nextValues = { ...current, [field]: value };
 
-        if (touched[field] || errors[field]) {
-          const nextErrors = validatePatientForm(nextValues)
+        const nextErrors = validatePatientForm(nextValues);
 
-          setErrors((currentErrors) => ({
-            ...currentErrors,
-            [field]: nextErrors[field],
-          }))
-        }
+        setErrors((prev) => ({
+          ...prev,
+          [field]: nextErrors[field],
+        }));
 
-        return nextValues
-      })
+        return nextValues;
+      });
     },
     [errors, touched],
-  )
+  );
 
   const handleBlur = useCallback(
     (field: PatientFormField) => {
-      const nextErrors = validatePatientForm(values)
+      const nextErrors = validatePatientForm(values);
 
-      setTouched((current) => ({ ...current, [field]: true }))
+      setTouched((current) => ({ ...current, [field]: true }));
       setErrors((current) => ({
         ...current,
         [field]: nextErrors[field],
-      }))
+      }));
     },
     [values],
-  )
+  );
 
   const addMedication = useCallback(() => {
-    const nextError = validateMedicationInput(medicationInput)
+    const nextError = validateMedicationInput(medicationInput);
 
     if (nextError) {
-      setMedicationError(nextError)
-      return
+      setMedicationError(nextError);
+      return;
     }
 
-    const normalizedMedication = getNormalizedMedication(medicationInput)
+    const normalizedMedication = getNormalizedMedication(medicationInput);
 
     if (values.medications.includes(normalizedMedication)) {
-      setMedicationError('This medication has already been added.')
-      return
+      setMedicationError("This medication has already been added.");
+      return;
     }
 
     setValues((current) => ({
       ...current,
       medications: [...current.medications, normalizedMedication],
-    }))
-    setMedicationInput('')
-    setMedicationError(null)
-  }, [medicationInput, values.medications])
+    }));
+    setMedicationInput("");
+    setMedicationError(null);
+  }, [medicationInput, values.medications]);
 
   const removeMedication = useCallback((medication: string) => {
     setValues((current) => ({
       ...current,
       medications: current.medications.filter((item) => item !== medication),
-    }))
-  }, [])
+    }));
+  }, []);
 
-  const handleMedicationInputChange = useCallback((value: string) => {
-    setMedicationInput(value)
+  const handleMedicationInputChange = useCallback(
+    (value: string) => {
+      setMedicationInput(value);
 
-    if (medicationError) {
-      setMedicationError(null)
-    }
-  }, [medicationError])
+      if (medicationError) {
+        setMedicationError(null);
+      }
+    },
+    [medicationError],
+  );
 
   const resetForm = useCallback(() => {
-    setValues(initialPatientFormValues)
-    setErrors({})
-    setTouched(getEmptyTouchedState())
-    setMedicationInput('')
-    setMedicationError(null)
-    setIsSubmitting(false)
-  }, [])
+    setValues(initialPatientFormValues);
+    setErrors({});
+    setTouched(getEmptyTouchedState());
+    setMedicationInput("");
+    setMedicationError(null);
+    setIsSubmitting(false);
+  }, []);
 
   const handleSubmit = useCallback(async () => {
-    const nextErrors = validatePatientForm(values)
+    const nextErrors = validatePatientForm(values);
     setTouched({
       age: true,
       bloodType: true,
@@ -124,23 +127,23 @@ export function usePatientForm(onSubmit: SubmitPatientHandler) {
       name: true,
       roomNumber: true,
       status: true,
-    })
-    setErrors(nextErrors)
+    });
+    setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length > 0 || isSubmitting) {
-      return false
+      return false;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      await Promise.resolve(onSubmit(buildPatientPayload(values)))
-      resetForm()
-      return true
+      await Promise.resolve(onSubmit(buildPatientPayload(values)));
+      resetForm();
+      return true;
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }, [isSubmitting, onSubmit, resetForm, values])
+  }, [isSubmitting, onSubmit, resetForm, values]);
 
   return {
     addMedication,
@@ -157,5 +160,5 @@ export function usePatientForm(onSubmit: SubmitPatientHandler) {
     setFieldValue,
     touched,
     values,
-  }
+  };
 }
